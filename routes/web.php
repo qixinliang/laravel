@@ -21,4 +21,6 @@ Route::get('/hi',function(){
 
 Route::get('/channels','ChannelController@index');
 Route::get('/login','ChannelController@login');
-Route::post('/test','ChannelController@account');
+Route::post('/account','ChannelController@account');
+
+Route::get('/collect','HouseController@collect');
