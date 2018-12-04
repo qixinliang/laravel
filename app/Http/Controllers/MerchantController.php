@@ -155,6 +155,9 @@ class MerchantController extends Controller{
 		]);
 	}
 
+
+	//对应前端修改注意：
+	//当前登陆用户为普通商户，添加按钮隐藏，不允许添加功能出现。
 	public function add(Request $request){
 		$method = $request->method();
 		$params = $request->all();
@@ -224,6 +227,8 @@ class MerchantController extends Controller{
 		$merchant->password = $password;
 		$merchant->repass   = $repass;
 		$merchant->type     = $type;
+		$merchant->creator_uid = $column->id;
+
 		if($type == Merchant::TYPE_NORMAL_MER || $type == Merchant::TYPE_VIP_MER){
 			$merchant->status = Merchant::STATUS_NOT_COMPLETED;
 		}else{
@@ -245,14 +250,122 @@ class MerchantController extends Controller{
 		]);
 	}
 
+	public function edit(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['login_name'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '登陆用户名为空'
+			]);
+		}
+		$loginName = $data['login_name'];
+		$column = Merchant::where('username',$loginName)->first();
+		if(empty($column)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '未找到该登陆用户'
+			]);
+		}
+
+		$loginUid = $column->id;
+
+		$username = $data['username'];
+		$password = !empty($data['password'])? md5($data['password']) : '';
+		$repass = !empty($data['repass'])? md5($data['repass']) : '';
+		$logo = !empty($data['logo'])? $data['logo'] : '';
+
+		$current = Merchant::where('username',$loginName)->first();
+		if(empty($current)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '数据库中并未存在此条要修改的记录'
+			]);
+		}
+		$uid = $current->id;
+		$creatorUid = $current->creator_uid;
+		if($loginUid != $uid || $loginUid != $creatorUid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '权限错误，仅能修改自己或者自己发布的信息'
+			]);
+		}
+
+		if(!empty($password) && !empty($repass)){
+			$column->password = $password;
+			$column->repass = $repass;
+		}
+		if(!empty($logo)){
+			$column->logo = $logo;
+		}
+		$column->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '修改成功',
+			'data' => $column
+		]);
+	}
+
+	public function info(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['username'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '登陆用户名为空'
+			]);
+		}
+		$username = $data['username'];
+		$column = Merchant::where('username',$username)->first();
+		if(empty($column)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '未找到该登陆用户'
+			]);
+		}
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '获取用户信息成功',
+			'data' => $column
+		]);
+	}
+
 
 	public function erweima(Request $request){
-		$method = $request->method();
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+		$data = $params['data'];
+		if(empty($data['merchant_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '商户id为空'
+			]);
+		}
 
-		$input = $request->all();
-		$mid = $request->input('merchant_id');
-
+		$data = $params['data'];
+		$mid = $data['merchant_id'];
 		$url = "abc.com/index.php?mid = {$mid}";
+
+		
 		$value = $url;         //二维码内容
   		$errorCorrectionLevel = 'L';  //容错级别
   		$matrixPointSize = 5;      //生成图片大小
