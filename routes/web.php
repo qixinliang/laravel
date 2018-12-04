@@ -24,3 +24,8 @@ Route::get('/login','ChannelController@login');
 Route::post('/account','ChannelController@account');
 
 Route::get('/collect','HouseController@collect');
+
+
+Route::post('/merchant/register','MerchantController@register');
+Route::post('/merchant/login','MerchantController@login');
+Route::post('/merchant/complete','MerchantController@complete');
