@@ -1,0 +1,186 @@
+<?php
+namespace App\Http\Controllers;
+
+use app\Sku;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class SkuController extends Controller{
+	public function add(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_name'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品名称为空'
+			]);
+		}
+
+		$sku = new Sku();
+		$sku->sku_name 		= $data['sku_name'];
+		$sku->valid_time 	= !empty($data['valid_time'])? $data['valid_time'] : 0;
+		$sku->logo 			= !empty($data['logo'])? $data['logo'] : '';
+		$sku->redirect_url 	= !empty($data['redirect_url'])? $data['redirect_url'] : '';
+		$sku->status 		= Sku::STATUS_NOT_AUDIT;
+		$sku->add_time 		= time();
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '奖品添加成功',
+			'data' => $sku
+		]);
+	}
+
+	public function edit(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品名称为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = SKu::find($skuId);
+		if(empty($sku)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '获取数据为空'
+			]);
+		}
+		if(isset($data['sku_name'])){
+			$sku->sku_name = $data['sku_name'];
+		}
+		if(isset($data['valid_time'])){
+			$sku->valid_time = $data['valid_time'];
+		}
+		if(isset($data['logo'])){
+			$sku->logo = $data['logo'];
+		}
+		if(isset($data['redirect_url'])){
+			$sku->redirect_url 	= $data['redirect_url'];
+		}
+
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '修改奖品数据成功',
+			'data' => $sku
+		]);
+	}
+
+	public function info(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品id为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = SKu::find($skuId);
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '获取sku信息成功',
+			'data' => $sku
+		]);
+	}
+
+	public function lists(Request $request){
+		$lists = Sku::all();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '获取列表成功',
+			'data' => $lists
+		]);
+	}
+
+	public function auditReject(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品id为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = SKu::find($skuId);
+		if(empty($sku)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '获取数据为空'
+			]);
+		}
+		$sku->status = Sku::STATUS_AUDIT_FAIL;
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '审核拒绝完成',
+			'data' => $sku
+		]);
+	}
+
+	public function auditSuccess(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品id为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = SKu::find($skuId);
+		if(empty($sku)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '获取数据为空'
+			]);
+		}
+		$sku->status = Sku::STATUS_AUDIT_SUCCESS;
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '审核成功完成',
+			'data' => $sku
+		]);
+	}
+}
