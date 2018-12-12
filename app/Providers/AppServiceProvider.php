@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Model\Session;
+use App\Observers\SessionObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+		Session::observe(SessionObserver::class); //session模型中注册观察者
     }
 
     /**

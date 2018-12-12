@@ -115,7 +115,7 @@ class MerchantController extends Controller{
 		}
 		$id = $data['id'];
 		$merName	= isset($data['merchant_name'])? $data['merchant_name'] : '';
-		$boss		= isset($data['boss'])? $data['boss']? : '';
+		$boss		= isset($data['boss'])? $data['boss'] : '';
 		$tel		= isset($data['tel'])? $data['tel'] : '';
 		$mobile		= isset($data['mobile'])? $data['mobile'] : '';
 		$address	= isset($data['address'])? $data['address'] : '';
