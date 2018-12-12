@@ -53,7 +53,7 @@ class Controller extends BaseController
 		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->action])) {
         	$this->checkToken();
             if ($this->tokenCheckPassed == false) {
-                //$this->tokenFailOut();
+                $this->tokenFailOut();
                 exit;
             }
         }
