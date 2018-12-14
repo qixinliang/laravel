@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Session;
+use App\Model\Session;
 
 class Controller extends BaseController
 {
@@ -26,11 +26,11 @@ class Controller extends BaseController
 
 
 	protected static $notNeedVerifyToken = [
-		'MerchantController' => 1,
+		//'MerchantController' => 1,
 	];
 
 	protected static $notNeedVerifyTokenByAct = [
-		'MerchantController/lists' => 1,
+		'MerchantController/login' => 1,
 	];
 
 	public function __construct(Request $request){
@@ -50,7 +50,8 @@ class Controller extends BaseController
 		var_dump($this->controller);
 		var_dump($this->method);
 
-		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->action])) {
+		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->method])) {
+			dump($this->method);
         	$this->checkToken();
             if ($this->tokenCheckPassed == false) {
                 $this->tokenFailOut();

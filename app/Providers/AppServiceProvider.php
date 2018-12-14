@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use App\Model\Session;
-use App\Observers\SessionObserver;
+use App\Model\Token;
+use App\Observers\TokenObserver;
 use Illuminate\Support\ServiceProvider;
+use DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +17,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-		Session::observe(SessionObserver::class); //session模型中注册观察者
+		//Token::observe(TokenObserver::class); //token模型中注册观察者
+		/*
+	    DB::listen(function($sql) {
+			dump($sql);
+	    });*/
     }
 
     /**

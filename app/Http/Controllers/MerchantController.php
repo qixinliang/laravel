@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Merchant;
+use App\Model\Token;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,7 +10,6 @@ use Illuminate\Http\Response;
 
 class MerchantController extends Controller{
 	public function register(Request $request){
-		$method = $request->method();
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -59,6 +59,8 @@ class MerchantController extends Controller{
 	}
 
 	public function login(Request $request){
+
+
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -77,24 +79,50 @@ class MerchantController extends Controller{
 			]);
 		}
 
-		$ret = Merchant::where('username', $username)->first();
+		$ret = Merchant::where(['username' => $username, 'password' => $password])->first();
 		if(!isset($ret) || empty($ret)){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '该用户名并未注册'
+				'error_msg' => '用户名或密码错误'
 			]);
 		}
-		if($ret->password != $password){
-			return response()->json([
-				'error_code' => -1,	
-				'error_msg' => '密码输入有误，请确认密码'
-			]);	
-		}
+		$uid = $ret->id;
+
+
+		//加session处理
+		$request->session()->put('uid',$uid);
+
+		
+		//写uid/token数据
+		$token = new Token;
+		
+		$token->uid = $uid;
+		$token->platform = 11;
+		$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . Token::generateCode(12));
+		$token->create_time = time();
+		dump($token);
+
+		$ret = $token->save();
+		dump($ret);
+		
+		/*
+		$platform = 11;
+
+		$data = [
+			'token' => md5($uid . '|' . $platform . '|' . time() . '|' . Token::generateCode(12)),
+			'uid' => $uid,
+			'platform' => $platform,
+			'create_time' => time()
+		];
+	
+		$flight = Token::create($data);
+
+		dump($flight);*/
 
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '登陆成功',
-			'data' => $ret
+			//'data' => $ret
 		]);
 	}
 

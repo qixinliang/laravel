@@ -4,18 +4,28 @@ namespace App\Model;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Database\Eloquent\Model;
 
-class Session extends Model{
+class Token extends Model{
 
-	public $timestamps = false;
 
-	protected $table = 'sessions';
+	protected	$table			= 'tokens';
+	protected	$primaryKey		= 'token';   //自定义主键字段
+	protected	$keyType		= 'string';  //自定义主键类型为字串
+	public		$incrementing	= false;     //主键非自增型
+	public		$timestamps		= false;
+	protected   $guarded		= [];
+	protected   $fillable = ['token','uid','platform','create_time'];
 
 	const TOKEN_PREFIX = 'token:';
 
 	public $token       = '';
     public $uid         = 0;
 	public $platform    = '';
-    public $createTime  = 0;
+    public $create_time  = 0;
+
+	public function __construct(){
+		$a = "token model construct";	
+		var_dump($a);
+	}
 
 	public static function generateCode($length = 4) {
 		return rand(pow(10,($length-1)), pow(10,$length)-1);
