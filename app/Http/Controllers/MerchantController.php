@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+use DB;
+
 class MerchantController extends Controller{
 	public function register(Request $request){
 		$params = $request->all();
@@ -92,7 +94,10 @@ class MerchantController extends Controller{
 		//加session处理
 		$request->session()->put('uid',$uid);
 
-		
+
+		$ret = DB::insert('insert into tokens (token, uid, platform, create_time) values (?, ?, ? , ? )',[123456789, 7,77,123]);
+		dump($ret);
+		/*
 		//写uid/token数据
 		$token = new Token;
 		
@@ -103,7 +108,8 @@ class MerchantController extends Controller{
 		dump($token);
 
 		$ret = $token->save();
-		dump($ret);
+		dump($ret);*/
+
 		
 		/*
 		$platform = 11;
