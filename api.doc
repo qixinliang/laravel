@@ -13,4 +13,19 @@ b)返回：
     "error_msg": "用户注册成功"
 }
 
-2.
+2.登陆 ---/merchant/login/
+a)请求参数：
+{
+    "data": {
+		"username":"aaa",
+		"password":"pwd",
+		//"captcha":"123456"
+	}
+}
+b)返回：
+{
+    "error_code": 0,
+    "error_msg": "登陆成功"
+}
+
+

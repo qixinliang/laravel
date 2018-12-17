@@ -61,6 +61,9 @@ class MerchantController extends Controller{
 	}
 
 	public function login(Request $request){
+		$uid = $request->session()->get('uid');
+		dump($uid);
+
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -104,10 +107,10 @@ class MerchantController extends Controller{
 		$token->platform = 11;
 		$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . UserToken::generateCode(12));
 		$token->create_time = time();
-		dump($token);
+		//dump($token);
 
 		$ret = $token->save();
-		dump($ret);
+		//dump($ret);
 
 		
 		/*
@@ -132,6 +135,7 @@ class MerchantController extends Controller{
 	}
 
 	public function logout(Request $request){
+		/*
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -141,6 +145,7 @@ class MerchantController extends Controller{
 		}
 
 		$uid = isset($params['uid'])? $params['uid'] : 0;
+		*/
 		$request->session()->forget('uid');
 		//$request->session()->flush();
 		return response()->json([

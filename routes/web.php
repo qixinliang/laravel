@@ -28,4 +28,5 @@ Route::get('/collect','HouseController@collect');
 
 Route::post('/merchant/register','MerchantController@register');
 Route::post('/merchant/login','MerchantController@login');
+Route::post('/merchant/logout','MerchantController@logout');
 Route::post('/merchant/complete','MerchantController@complete');

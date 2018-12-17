@@ -32,6 +32,7 @@ class Controller extends BaseController
 	protected static $notNeedVerifyTokenByAct = [
 		'MerchantController/register' => 1,
 		'MerchantController/login' => 1,
+		'MerchantController/logout' => 1,
 	];
 
 	public function __construct(Request $request){

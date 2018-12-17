@@ -15,6 +15,7 @@ class VerifyCsrfToken extends BaseVerifier
         //
 		'/merchant/register',
 		'/merchant/login',
+		'/merchant/logout',
 		'/merchant/complete'
     ];
 }
