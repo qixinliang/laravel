@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-use App\Model\Session;
+use App\Model\UserToken;
 
 class Controller extends BaseController
 {
@@ -30,6 +30,7 @@ class Controller extends BaseController
 	];
 
 	protected static $notNeedVerifyTokenByAct = [
+		'MerchantController/register' => 1,
 		'MerchantController/login' => 1,
 	];
 
@@ -47,11 +48,11 @@ class Controller extends BaseController
 
 		$this->controller = $this->getCurrentControllerName();
 		$this->method = $this->getCurrentMethodName();
-		var_dump($this->controller);
-		var_dump($this->method);
+		//dump($this->controller);
+		//dump($this->method);
 
 		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->method])) {
-			dump($this->method);
+			//dump("------checking token------");
         	$this->checkToken();
             if ($this->tokenCheckPassed == false) {
                 $this->tokenFailOut();
@@ -72,7 +73,7 @@ class Controller extends BaseController
 		if($this->testAccessToken == 'situxu001'){
 			$this->tokenCheckPassed = true;
 		}else{
-			$session = new Session();
+			$session = new UserToken();
             $row = $session->getByToken($this->accessToken);
             //校验是否为黑名单用户
             if (empty($row->uid)){

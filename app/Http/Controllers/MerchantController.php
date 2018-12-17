@@ -144,7 +144,7 @@ class MerchantController extends Controller{
 		$request->session()->forget('uid');
 		//$request->session()->flush();
 		return response()->json([
-			'error_code' => 0，
+			'error_code' => 0,
 			'error_msg' => '退出成功'
 		]);
 	}
