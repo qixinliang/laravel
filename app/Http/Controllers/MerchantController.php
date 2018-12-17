@@ -61,8 +61,6 @@ class MerchantController extends Controller{
 	}
 
 	public function login(Request $request){
-
-
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -130,6 +128,24 @@ class MerchantController extends Controller{
 			'error_code' => 0,
 			'error_msg' => '登陆成功',
 			//'data' => $ret
+		]);
+	}
+
+	public function logout(Request $request){
+		$params = $request->all();
+		if(empty($params)){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$uid = isset($params['uid'])? $params['uid'] : 0;
+		$request->session()->forget('uid');
+		//$request->session()->flush();
+		return response()->json([
+			'error_code' => 0，
+			'error_msg' => '退出成功'
 		]);
 	}
 
