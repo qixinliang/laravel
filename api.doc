@@ -29,3 +29,12 @@ b)返回：
 }
 
 
+3.登出 ---/merchant/logout/
+a)请求参数：
+无
+b)返回：
+{
+    "error_code": 0,
+    "error_msg": "退出成功"
+}
+
