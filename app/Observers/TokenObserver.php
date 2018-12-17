@@ -1,17 +1,16 @@
 <?php
 namespace App\Observers;
 
-use App\Model\Token;
+use App\Model\UserToken;
 use Illuminate\Support\Facades\Redis;
 
 class TokenObserver{
 	public function __construct(){
-		$b = "observer construct";
-		dump($b);
+		dump("Observer construct");
 	}
 
 /*
-	public function saving(Session $session){
+	public function saving(UserToken $session){
 		dump("saving");
 		$curTime = time();
         if(empty($session->token)){
@@ -22,11 +21,11 @@ class TokenObserver{
         $session->create_time = $curTime;
 	}
 
-	public function saved(Session $session){
+	public function saved(UserToken $session){
 		dump("saved");
 		dump($session);
 		$expireTime = $session->create_time + (86400 * 90);
-        $key = Session::TOKEN_PREFIX . $session->token;
+        $key = UserToken::TOKEN_PREFIX . $session->token;
 
         $data = [
             'uid'       => $session->uid,

@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Merchant;
-use App\Model\Token;
+use App\Model\UserToken;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -94,36 +94,37 @@ class MerchantController extends Controller{
 		//加session处理
 		$request->session()->put('uid',$uid);
 
-
-		$ret = DB::insert('insert into tokens (token, uid, platform, create_time) values (?, ?, ? , ? )',[123456789, 7,77,123]);
-		dump($ret);
 		/*
+		$ret = DB::insert('insert into user_token (token, uid, platform, create_time) values (?, ?, ? , ? )',[123456789, 7,77,123]);
+		dump($ret);
+		*/
+		
 		//写uid/token数据
-		$token = new Token;
+		$token = new UserToken;
 		
 		$token->uid = $uid;
 		$token->platform = 11;
-		$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . Token::generateCode(12));
+		$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . UserToken::generateCode(12));
 		$token->create_time = time();
 		dump($token);
 
 		$ret = $token->save();
-		dump($ret);*/
+		dump($ret);
 
 		
 		/*
 		$platform = 11;
 
 		$data = [
-			'token' => md5($uid . '|' . $platform . '|' . time() . '|' . Token::generateCode(12)),
+			'token' => md5($uid . '|' . $platform . '|' . time() . '|' . UserToken::generateCode(12)),
 			'uid' => $uid,
 			'platform' => $platform,
 			'create_time' => time()
 		];
 	
-		$flight = Token::create($data);
+		$r = UserToken::create($data);
 
-		dump($flight);*/
+		dump($r);*/
 
 		return response()->json([
 			'error_code' => 0,

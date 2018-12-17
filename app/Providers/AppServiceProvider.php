@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Model\Token;
+use App\Model\UserToken;
 use App\Observers\TokenObserver;
 use Illuminate\Support\ServiceProvider;
 use DB;
@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-		//Token::observe(TokenObserver::class); //token模型中注册观察者
+		//UserToken::observe(TokenObserver::class); //token模型中注册观察者
 		/*
 	    DB::listen(function($sql) {
 			dump($sql);
