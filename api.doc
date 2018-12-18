@@ -77,3 +77,34 @@ b)返回：
         "add_time":1545041702
     }
 }
+
+5.用户／商户列表接口---/merchant/lists (get方法，需要加入分页)
+请求:
+无
+
+返回:
+      
+{
+    "error_code":0,
+    "error_msg":"获取列表信息成功",
+    "data":[
+        {
+            "id":8,
+            "username":"abc",
+            "password":"9003d1df22eb4d3820015070385194c8",
+            "repass":"9003d1df22eb4d3820015070385194c8",
+            "captcha":null,
+            "type":1,
+            "status":1,
+            "creator_uid":null,
+            "merchant_name":"测试商户1",
+            "boss":"司徒旭",
+            "tel":"0719-12345678",
+            "mobile":"13800138000",
+            "address":"宁波市抚平区大娘水饺",
+            "logo":"aaa.com/logo.png",
+            "licence":"bbb.com/licence.jpg",
+            "add_time":1545041702
+        }
+    ]
+}
