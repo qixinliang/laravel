@@ -39,6 +39,7 @@ class UserToken extends Model{
             foreach($arr as $k => $v){
                 $session->$k = $v;
             }
+			//无$session->save()，不写入库中，只是从缓存里获取了array，构建session的object返回给上层
             return $session;
         }
 		$session = self::where('token', $token)->first();

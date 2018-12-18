@@ -49,25 +49,21 @@ class Controller extends BaseController
 
 		$this->controller = $this->getCurrentControllerName();
 		$this->method = $this->getCurrentMethodName();
-		//dump($this->controller);
-		//dump($this->method);
+		dump($this->controller);
+		dump($this->method);
 
 		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->method])) {
-			//dump("------checking token------");
+			dump("------checking token------");
         	$this->checkToken();
             if ($this->tokenCheckPassed == false) {
-                $this->tokenFailOut();
-                exit;
+				$message = json_encode([
+					'error_code' => -1,
+					'error_msg' => 'check token failed'
+				]);
+				die($message);
             }
         }
 
-	}
-
-	protected function tokenFailOut(){
-		return response()->json([
-			'error_code' => -1,
-			'error_msg' => 'check access_token failed'
-		]);
 	}
 
 	protected function checkToken(){
