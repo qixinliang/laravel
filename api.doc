@@ -38,3 +38,42 @@ b)返回：
     "error_msg": "退出成功"
 }
 
+4.完善商户资料---/merchant/complete
+请求:
+{
+    "data": {
+    	"id":8,
+    	"merchant_name":"测试商户1",
+    	"boss":"司徒旭",
+    	"tel":"0719-12345678",
+    	"mobile":13800138000,
+    	"address":"宁波市抚平区大娘水饺",
+    	"logo":"aaa.com/logo.png",
+    	"licence":"bbb.com/licence.jpg"
+    },
+    "uid":8,
+    "access_token":"4d1134eb4c88fcee5293d8de2112781c"
+}
+返回:
+{
+    "error_code":0,
+    "error_msg":"商户资料完善成功",
+    "data":{
+        "id":8,
+        "username":"abc",
+        "password":"9003d1df22eb4d3820015070385194c8",
+        "repass":"9003d1df22eb4d3820015070385194c8",
+        "captcha":null,
+        "type":1,
+        "status":1,
+        "creator_uid":null,
+        "merchant_name":"测试商户1",
+        "boss":"司徒旭",
+        "tel":"0719-12345678",
+        "mobile":13800138000,
+        "address":"宁波市抚平区大娘水饺",
+        "logo":"aaa.com/logo.png",
+        "licence":"bbb.com/licence.jpg",
+        "add_time":1545041702
+    }
+}
