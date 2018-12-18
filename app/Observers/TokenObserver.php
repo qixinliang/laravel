@@ -19,13 +19,14 @@ class TokenObserver{
 			dump($session->token);
         }
         $session->create_time = $curTime;
-	}
+	}*/
 
 	public function saved(UserToken $session){
 		dump("saved");
 		dump($session);
 		$expireTime = $session->create_time + (86400 * 90);
         $key = UserToken::TOKEN_PREFIX . $session->token;
+		dump($key);
 
         $data = [
             'uid'       => $session->uid,
@@ -36,5 +37,4 @@ class TokenObserver{
         Redis::hmset($key, $data);
         Redis::expireAt($key, $expireTime);
 	}
-	*/
 }

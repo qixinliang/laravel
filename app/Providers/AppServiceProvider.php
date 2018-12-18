@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-		//UserToken::observe(TokenObserver::class); //token模型中注册观察者
+		UserToken::observe(TokenObserver::class); //token模型中注册观察者
 		/*
 	    DB::listen(function($sql) {
 			dump($sql);

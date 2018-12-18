@@ -7,6 +7,7 @@ use App\Model\UserToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Redis;
 
 use DB;
 
@@ -72,6 +73,7 @@ class MerchantController extends Controller{
 			]);
 		}
 
+		$platform = $request->input('data.platform',0);
 		$username = $request->input('data.username');
 		$password = md5($request->input('data.password'));
 		//$captcha = $request->input('data.captcha');
@@ -95,37 +97,26 @@ class MerchantController extends Controller{
 		//加session处理
 		$request->session()->put('uid',$uid);
 
-		/*
-		$ret = DB::insert('insert into user_token (token, uid, platform, create_time) values (?, ?, ? , ? )',[123456789, 7,77,123]);
-		dump($ret);
-		*/
-		
 		//写uid/token数据
-		$token = new UserToken;
-		
-		$token->uid = $uid;
-		$token->platform = 11;
-		$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . UserToken::generateCode(12));
-		$token->create_time = time();
-		//dump($token);
+		//1.token固定一个，只更新时间,更新时间的目的，在于更新了create_time，expire_time也会被动更新.
+		//2.每次进来需要先清理redis里的数据，然后在save的时候，触发事件再设置。
+		$row = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(!isset($row) || empty($row)){
+			$token = new UserToken;
+			$token->uid = $uid;
+			$token->platform = $platform;
+			$token->token = md5($token->uid . '|' . $token->platform . '|' . time() . '|' . UserToken::generateCode(12));
+			$token->create_time = time();
+			//dump($token);
+			$token->save();
+		}else{
+			//重置redis
+			$key = UserToken::TOKEN_PREFIX . $row->token;
+			Redis::del($key);
 
-		$ret = $token->save();
-		//dump($ret);
-
-		
-		/*
-		$platform = 11;
-
-		$data = [
-			'token' => md5($uid . '|' . $platform . '|' . time() . '|' . UserToken::generateCode(12)),
-			'uid' => $uid,
-			'platform' => $platform,
-			'create_time' => time()
-		];
-	
-		$r = UserToken::create($data);
-
-		dump($r);*/
+			$row->create_time = time();
+			$row->save();
+		}
 
 		return response()->json([
 			'error_code' => 0,
