@@ -137,3 +137,39 @@ b)返回：
         "id": 10
     }
 }
+
+7.编辑商户接口---/merchant/edit/ POST
+请求:
+{
+	"data":{
+		"username":"xinliang",
+		"password":123456789,
+		"repass":123456789,
+		"logo":"logo.com/logo.jpg"
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "修改成功",
+    "data": {
+        "id": 10,
+        "username": "xinliang",
+        "password": "25f9e794323b453885f5181f1b624d0b",
+        "repass": "25f9e794323b453885f5181f1b624d0b",
+        "captcha": null,
+        "type": 1,
+        "status": 0,
+        "creator_uid": 9,
+        "merchant_name": null,
+        "boss": null,
+        "tel": null,
+        "mobile": null,
+        "address": null,
+        "logo": "logo.com/logo.jpg",
+        "licence": null,
+        "add_time": 1545207890
+    }
+}

@@ -304,6 +304,21 @@ class MerchantController extends Controller{
 	}
 
 	public function edit(Request $request){
+		$loginUid = $request->session()->get('uid');
+		if(empty($loginUid)){
+			return response()->json([
+				'error_code' => -1,	
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$row = Merchant::find($loginUid);
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '数据异常，并未在用户表里找到该用户'
+			]);
+		}
+
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
@@ -313,56 +328,54 @@ class MerchantController extends Controller{
 		}
 
 		$data = $params['data'];
-		if(empty($data['login_name'])){
+		if(empty($data['username'])){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '登陆用户名为空'
+				"error_msg"  => '请提供需要修改的商户名'
 			]);
 		}
-		$loginName = $data['login_name'];
-		$row = Merchant::where('username',$loginName)->first();
-		if(empty($row)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '未找到该登陆用户'
-			]);
-		}
-
-		$loginUid = $row->id;
-
 		$username = $data['username'];
+
 		$password = !empty($data['password'])? md5($data['password']) : '';
 		$repass = !empty($data['repass'])? md5($data['repass']) : '';
 		$logo = !empty($data['logo'])? $data['logo'] : '';
 
-		$current = Merchant::where('username',$loginName)->first();
+		if($password != $repass){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '密码不一致'
+			]);
+		}
+
+		$current = Merchant::where('username',$username)->first();
 		if(empty($current)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '数据库中并未存在此条要修改的记录'
 			]);
 		}
+
 		$uid = $current->id;
 		$creatorUid = $current->creator_uid;
-		if($loginUid != $uid || $loginUid != $creatorUid){
+		if($loginUid != $uid && $loginUid != $creatorUid){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '权限错误，仅能修改自己或者自己发布的信息'
+				'error_msg' => '权限错误，仅能修改自己或者自己创建的商户数据'
 			]);
 		}
 
 		if(!empty($password) && !empty($repass)){
-			$row->password = $password;
-			$row->repass = $repass;
+			$current->password = $password;
+			$current->repass = $repass;
 		}
 		if(!empty($logo)){
-			$row->logo = $logo;
+			$current->logo = $logo;
 		}
-		$row->save();
+		$current->save();
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '修改成功',
-			'data' => $row
+			'data' => $current
 		]);
 	}
 
