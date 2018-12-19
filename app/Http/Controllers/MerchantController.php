@@ -392,17 +392,11 @@ class MerchantController extends Controller{
 		if(empty($data['username'])){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '登陆用户名为空'
+				'error_msg' => '要查找的用户名为空'
 			]);
 		}
 		$username = $data['username'];
 		$row = Merchant::where('username',$username)->first();
-		if(empty($row)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '未找到该登陆用户'
-			]);
-		}
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '获取用户信息成功',

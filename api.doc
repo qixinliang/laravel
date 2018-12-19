@@ -173,3 +173,34 @@ b)返回：
         "add_time": 1545207890
     }
 }
+
+8.获取用户信息接口---/merchant/info/ POST
+请求:
+{
+	"data":{
+		"username":"xinliang"
+	}
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "获取用户信息成功",
+    "data": {
+        "id": 10,
+        "username": "xinliang",
+        "password": "25f9e794323b453885f5181f1b624d0b",
+        "repass": "25f9e794323b453885f5181f1b624d0b",
+        "captcha": null,
+        "type": 1,
+        "status": 0,
+        "creator_uid": 9,
+        "merchant_name": null,
+        "boss": null,
+        "tel": null,
+        "mobile": null,
+        "address": null,
+        "logo": "logo.com/logo.jpg",
+        "licence": null,
+        "add_time": 1545207890
+    }
+}

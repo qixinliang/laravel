@@ -32,5 +32,6 @@ Route::post('/merchant/logout','MerchantController@logout');
 Route::post('/merchant/complete','MerchantController@complete');
 Route::post('/merchant/add','MerchantController@add');
 Route::post('/merchant/edit','MerchantController@edit');
+Route::post('/merchant/info','MerchantController@info');
 
 Route::get('/merchant/lists','MerchantController@lists');
