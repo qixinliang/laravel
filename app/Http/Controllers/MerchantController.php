@@ -406,6 +406,14 @@ class MerchantController extends Controller{
 
 
 	public function erweima(Request $request){
+		$loginUid = $request->session()->get('uid');
+		if(empty($loginUid)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '未登陆'
+			]);
+		}
+
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
@@ -420,23 +428,33 @@ class MerchantController extends Controller{
 				'error_msg' => '商户id为空'
 			]);
 		}
-
-		$data = $params['data'];
 		$mid = $data['merchant_id'];
-		$url = "abc.com/index.php?mid = {$mid}";
+		$row = Merchant::find($mid);
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '商户数据为空'
+			]);
+		}
+		if($row->id != $loginUid && $row->creator_uid != $loginUid){
+			return reponse()->json([
+				'error_code' => -1,
+				'error_msg'  => '仅允许生成自己或者自己创建的商户的二维码'
+			]);	
+		}
 
-		
-		$value = $url;         //二维码内容
-  		$errorCorrectionLevel = 'L';  //容错级别
-  		$matrixPointSize = 5;      //生成图片大小
-  		//生成二维码图片
-  		$filename = 'qrcode/'.time().'.png';
+		$value 					= "abc.com/index.php?mid = {$mid}"; //二维码内容
+  		$errorCorrectionLevel 	= 'L'; //容错级别
+  		$matrixPointSize 		= 5;   //生成图片大小
+  		$filename 				= 'qrcode/'.time().'.png';//生成二维码图片
+
   		QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
-  		$QR = $filename;        //已经生成的原始二维码图片文件
+  		$QR = $filename; //已经生成的原始二维码图片文件
   		$QR = imagecreatefromstring(file_get_contents($QR));
-  		//输出图片
-  		imagepng($QR, 'qrcode.png');
+
+  		imagepng($QR, 'qrcode.png');//输出图片
   		imagedestroy($QR);
+
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '生成二维码成功',
