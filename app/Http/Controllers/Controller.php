@@ -50,11 +50,11 @@ class Controller extends BaseController
 
 		$this->controller = $this->getCurrentControllerName();
 		$this->method = $this->getCurrentMethodName();
-		dump($this->controller);
-		dump($this->method);
+		//dump($this->controller);
+		//dump($this->method);
 
 		if (!isset(self::$notNeedVerifyToken[$this->controller]) && !isset(self::$notNeedVerifyTokenByAct[$this->controller."/".$this->method])) {
-			dump("------checking token------");
+			//dump("------checking token------");
         	$this->checkToken();
             if ($this->tokenCheckPassed == false) {
 				$message = json_encode([

@@ -108,3 +108,32 @@ b)返回：
         }
     ]
 }
+6.添加商户接口---/merchant/add/ POST
+请求:
+{
+	"data":{
+		"username":"xinliang",
+		"password":123456,
+		"repass":123456,
+		"type":1,
+		"logo":"a.com/logo.jpg"
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+
+返回:
+{
+    "error_code": 0,
+    "error_msg": "添加用户／商户成功",
+    "data": {
+        "username": "xinliang",
+        "password": "e10adc3949ba59abbe56e057f20f883e",
+        "repass": "e10adc3949ba59abbe56e057f20f883e",
+        "type": 1,
+        "creator_uid": 9,
+        "status": 0,
+        "add_time": 1545207890,
+        "id": 10
+    }
+}

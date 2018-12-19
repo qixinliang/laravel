@@ -213,7 +213,28 @@ class MerchantController extends Controller{
 	//对应前端修改注意：
 	//当前登陆用户为普通商户，添加按钮隐藏，不允许添加功能出现。
 	public function add(Request $request){
-		$method = $request->method();
+		$uid = $request->session()->get('uid');
+		if(empty($uid)){
+			return response()->json([
+				'error_code' => -1,	
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$row = Merchant::find($uid);
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '数据异常，并未在用户表里找到该用户'
+			]);
+		}
+		if($row->type == Merchant::TYPE_NORMAL_MER){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '当前登陆用户为普通商户，没有添加普通商户/管理员的权限'
+			]);
+		}
+
+
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
@@ -221,29 +242,7 @@ class MerchantController extends Controller{
 				'error_msg' => '请求参数为空'
 			]);
 		}
-
 		$data = $params['data'];
-		if(empty($data['login_name'])){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '登陆用户名为空'
-			]);
-		}
-		$loginName = $data['login_name'];
-		$column = Merchant::where('username',$loginName)->first();
-		if(empty($column)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '未找到该登陆用户'
-			]);
-		}
-		if($column->type == Merchant::TYPE_NORMAL_MER){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '当前登陆用户为普通商户，没有添加普通商户/管理员的权限'
-			]);
-		}
-
 		if(empty($data['username']) || empty($data['password']) || empty($data['repass'])){
 			return response()->json([
 				'error_code' => -1,
@@ -259,17 +258,17 @@ class MerchantController extends Controller{
 				'error_msg' => '已有该用户／商户，请勿重复添加'
 			]);	
 		}
-		$password = md5(data['password']);
+		$password = md5($data['password']);
 		$repass   = md5($data['repass']);
 		if($password != $repass){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '两个密码输入不一致，请重新确认'
+				'error_msg' => '两个密码不一致，请确认'
 			]);
 		}
 		$type = !empty($data['type'])? $data['type'] : Merchant::TYPE_NORMAL_MER;
 		$logo = !empty($data['logo'])? $data['logo']: '';
-		if($type == Merchant::TYPE_ADMIN && $column->type == Merchant::TYPE_VIP_MER ){
+		if($type == Merchant::TYPE_ADMIN && $row->type == Merchant::TYPE_VIP_MER ){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '普通商户／代理商无添加管理员的权限'
@@ -281,7 +280,7 @@ class MerchantController extends Controller{
 		$merchant->password = $password;
 		$merchant->repass   = $repass;
 		$merchant->type     = $type;
-		$merchant->creator_uid = $column->id;
+		$merchant->creator_uid = $uid;
 
 		if($type == Merchant::TYPE_NORMAL_MER || $type == Merchant::TYPE_VIP_MER){
 			$merchant->status = Merchant::STATUS_NOT_COMPLETED;
@@ -321,15 +320,15 @@ class MerchantController extends Controller{
 			]);
 		}
 		$loginName = $data['login_name'];
-		$column = Merchant::where('username',$loginName)->first();
-		if(empty($column)){
+		$row = Merchant::where('username',$loginName)->first();
+		if(empty($row)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '未找到该登陆用户'
 			]);
 		}
 
-		$loginUid = $column->id;
+		$loginUid = $row->id;
 
 		$username = $data['username'];
 		$password = !empty($data['password'])? md5($data['password']) : '';
@@ -353,17 +352,17 @@ class MerchantController extends Controller{
 		}
 
 		if(!empty($password) && !empty($repass)){
-			$column->password = $password;
-			$column->repass = $repass;
+			$row->password = $password;
+			$row->repass = $repass;
 		}
 		if(!empty($logo)){
-			$column->logo = $logo;
+			$row->logo = $logo;
 		}
-		$column->save();
+		$row->save();
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '修改成功',
-			'data' => $column
+			'data' => $row
 		]);
 	}
 
@@ -384,8 +383,8 @@ class MerchantController extends Controller{
 			]);
 		}
 		$username = $data['username'];
-		$column = Merchant::where('username',$username)->first();
-		if(empty($column)){
+		$row = Merchant::where('username',$username)->first();
+		if(empty($row)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '未找到该登陆用户'
@@ -394,7 +393,7 @@ class MerchantController extends Controller{
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '获取用户信息成功',
-			'data' => $column
+			'data' => $row
 		]);
 	}
 
