@@ -406,6 +406,7 @@ class MerchantController extends Controller{
 
 
 	public function erweima(Request $request){
+		require_once __DIR__ . '/../../../vendor/phpqrcode/phpqrcode.php';
 		$loginUid = $request->session()->get('uid');
 		if(empty($loginUid)){
 			return response()->json([
@@ -446,9 +447,9 @@ class MerchantController extends Controller{
 		$value 					= "abc.com/index.php?mid = {$mid}"; //二维码内容
   		$errorCorrectionLevel 	= 'L'; //容错级别
   		$matrixPointSize 		= 5;   //生成图片大小
-  		$filename 				= 'qrcode/'.time().'.png';//生成二维码图片
+  		$filename 				= __DIR__ . '/../../../public/qrcode/'.time().'.png';//生成二维码图片
 
-  		QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
+  		\QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
   		$QR = $filename; //已经生成的原始二维码图片文件
   		$QR = imagecreatefromstring(file_get_contents($QR));
 

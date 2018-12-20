@@ -204,3 +204,21 @@ b)返回：
         "add_time": 1545207890
     }
 }
+
+9.生成二维码接口---/merchant/erweima/ POST
+请求:
+{
+	"data":{
+		"merchant_id":10
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "生成二维码成功",
+    "data": {
+        "erweima": "/home/situxu/laravel/blog/app/Http/Controllers/../../../public/qrcode/1545289798.png"
+    }
+}
