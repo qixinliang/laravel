@@ -50,6 +50,14 @@ class SkuController extends Controller{
 	}
 
 	public function edit(Request $request){
+		$uid = $request->session()->get('uid');
+		if(empty($uid)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '请先登陆'
+			]);
+		}
+
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
@@ -62,11 +70,11 @@ class SkuController extends Controller{
 		if(empty($data['sku_id'])){
 			return response()->json([
 				'error_code' => -1,
-				'error_msg' => '奖品名称为空'
+				'error_msg' => '奖品id为空'
 			]);
 		}
 		$skuId = $data['sku_id'];
-		$sku = SKu::find($skuId);
+		$sku = Sku::find($skuId);
 		if(empty($sku)){
 			return response()->json([
 				'error_code' => -1,

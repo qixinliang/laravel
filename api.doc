@@ -253,3 +253,31 @@ b)返回：
 }
 
 11.奖品编辑接口---/sku/edit/ POST
+请求:
+{
+	"data":{
+		"sku_id":1,
+		"sku_name":"更新-测试奖品优惠券111",
+		"valid_time":7,
+		"logo":"abc.com/logo.jpg",
+		"redirect_url":"aaa.com/111"
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "修改奖品数据成功",
+    "data": {
+        "id": 1,
+        "sku_name": "更新-测试奖品优惠券111",
+        "valid_time": 7,
+        "logo": "abc.com/logo.jpg",
+        "redirect_url": "aaa.com/111",
+        "status": 0,
+        "is_delete": 0,
+        "creator_uid": 9,
+        "add_time": 1545293347
+    }
+}
