@@ -35,6 +35,9 @@ class Controller extends BaseController
 		'MerchantController/logout' => 1,
 		'MerchantController/lists' => 1,
 		'MerchantController/info' => 1,
+
+		'SkuController/info' => 1,
+		'SkuController/lists' => 1,
 	];
 
 	public function __construct(Request $request){

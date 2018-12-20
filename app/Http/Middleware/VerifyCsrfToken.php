@@ -25,5 +25,8 @@ class VerifyCsrfToken extends BaseVerifier
 	
 		'/sku/add',
 		'/sku/edit',
+		'/sku/info',
+		'/sku/lists',
+		'/sku/audit',
     ];
 }

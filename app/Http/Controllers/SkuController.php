@@ -81,6 +81,12 @@ class SkuController extends Controller{
 				'error_msg' => '获取数据为空'
 			]);
 		}
+		if($uid != $sku->creator_uid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '非奖品发布者无权修改'	
+			]);
+		}
 		if(isset($data['sku_name'])){
 			$sku->sku_name = $data['sku_name'];
 		}
@@ -153,7 +159,7 @@ class SkuController extends Controller{
 			]);
 		}
 		$skuId = $data['sku_id'];
-		$sku = SKu::find($skuId);
+		$sku = Sku::find($skuId);
 		if(empty($sku)){
 			return response()->json([
 				'error_code' => -1,
@@ -186,7 +192,7 @@ class SkuController extends Controller{
 			]);
 		}
 		$skuId = $data['sku_id'];
-		$sku = SKu::find($skuId);
+		$sku = Sku::find($skuId);
 		if(empty($sku)){
 			return response()->json([
 				'error_code' => -1,
@@ -198,6 +204,56 @@ class SkuController extends Controller{
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '审核成功完成',
+			'data' => $sku
+		]);
+	}
+
+	public function audit(Request $request){
+		$uid = $request->session()->get('uid');
+		if(empty($uid)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '请先登陆'
+			]);
+		}
+
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品id为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = Sku::find($skuId);
+		if(empty($sku)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '获取数据为空'
+			]);
+		}
+		if($uid != $sku->creator_uid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '非奖品发布者无权审核'	
+			]);
+		}
+		if(isset($data['status'])){
+			$sku->status = $data['status'];
+		}
+
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '审核完成',
 			'data' => $sku
 		]);
 	}

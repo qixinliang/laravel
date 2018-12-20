@@ -281,3 +281,112 @@ b)返回：
         "add_time": 1545293347
     }
 }
+
+12.奖品信息获取接口---/sku/info POST
+请求:
+{
+	"data":{
+		"sku_id":1
+	}
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "获取sku信息成功",
+    "data": {
+        "id": 1,
+        "sku_name": "更新-测试奖品优惠券111",
+        "valid_time": "7",
+        "logo": "abc.com/logo.jpg",
+        "redirect_url": "aaa.com/111",
+        "status": 0,
+        "is_delete": 0,
+        "creator_uid": 9,
+        "add_time": 1545293347
+    }
+}
+
+13.奖品列表接口---/sku/lists GET
+请求:无
+返回:
+{
+    "error_code": 0,
+    "error_msg": "获取列表成功",
+    "data": [
+        {
+            "id": 1,
+            "sku_name": "更新-测试奖品优惠券111",
+            "valid_time": "7",
+            "logo": "abc.com/logo.jpg",
+            "redirect_url": "aaa.com/111",
+            "status": 0,
+            "is_delete": 0,
+            "creator_uid": 9,
+            "add_time": 1545293347
+        },
+        {
+            "id": 2,
+            "sku_name": "更新-测试奖品优惠券",
+            "valid_time": "14",
+            "logo": "abc.com/logo.jpg",
+            "redirect_url": "a.com/111",
+            "status": 0,
+            "is_delete": 0,
+            "creator_uid": 9,
+            "add_time": 1545294675
+        }
+    ]
+}
+14.审核拒绝接口---/sku/audit POST
+请求:
+{
+	"data":{
+		"sku_id":1,
+		"status":-1
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "审核完成",
+    "data": {
+        "id": 1,
+        "sku_name": "更新-测试奖品优惠券111",
+        "valid_time": "7",
+        "logo": "abc.com/logo.jpg",
+        "redirect_url": "aaa.com/111",
+        "status": -1,
+        "is_delete": 0,
+        "creator_uid": 9,
+        "add_time": 1545293347
+    }
+}
+
+15.审核通过接口---/sku/audit POST
+请求:
+{
+	"data":{
+		"sku_id":2,
+		"status":1
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "审核完成",
+    "data": {
+        "id": 2,
+        "sku_name": "更新-测试奖品优惠券",
+        "valid_time": "14",
+        "logo": "abc.com/logo.jpg",
+        "redirect_url": "a.com/111",
+        "status": 1,
+        "is_delete": 0,
+        "creator_uid": 9,
+        "add_time": 1545294675
+    }
+}
