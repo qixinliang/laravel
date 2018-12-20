@@ -35,4 +35,6 @@ Route::post('/merchant/edit','MerchantController@edit');
 Route::post('/merchant/info','MerchantController@info');
 Route::post('/merchant/erweima','MerchantController@erweima');
 
+Route::post('/sku/add','SkuController@add');
+
 Route::get('/merchant/lists','MerchantController@lists');

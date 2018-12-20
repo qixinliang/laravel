@@ -22,5 +22,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'/merchant/edit',
 		'/merchant/info',
 		'/merchant/erweima',
+	
+		'/sku/add',
     ];
 }

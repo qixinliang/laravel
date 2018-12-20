@@ -222,3 +222,34 @@ b)返回：
         "erweima": "/home/situxu/laravel/blog/app/Http/Controllers/../../../public/qrcode/1545289798.png"
     }
 }
+
+10.添加奖品接口---/sku/add/ POST
+请求:
+{
+	"data":{
+		"sku_name":"测试奖品优惠券",
+		"valid_time":7,
+		"logo":"a.com/logo.jpg",
+		"redirect_url":"a.com/take/prize"
+	},
+	"uid":9,
+	"access_token":"0dc199bd59c39e072ab52e2a56bc584a"
+}
+返回:
+{
+    "error_code": 0,
+    "error_msg": "奖品添加成功",
+    "data": {
+        "sku_name": "测试奖品优惠券",
+        "valid_time": 7,
+        "logo": "a.com/logo.jpg",
+        "redirect_url": "a.com/take/prize",
+        "status": 0,
+        "add_time": 1545293347,
+        "creator_uid": 9,
+        "is_delete": 0,
+        "id": 1
+    }
+}
+
+11.奖品编辑接口---/sku/edit/ POST

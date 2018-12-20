@@ -1,13 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
-use app\Sku;
+use App\Sku;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class SkuController extends Controller{
 	public function add(Request $request){
+		$uid = $request->session()->get('uid');
+		if(empty($uid)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
@@ -31,6 +39,8 @@ class SkuController extends Controller{
 		$sku->redirect_url 	= !empty($data['redirect_url'])? $data['redirect_url'] : '';
 		$sku->status 		= Sku::STATUS_NOT_AUDIT;
 		$sku->add_time 		= time();
+		$sku->creator_uid   = $uid;
+		$sku->is_delete		= 0;
 		$sku->save();
 		return response()->json([
 			'error_code' => 0,
