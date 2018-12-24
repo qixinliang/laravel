@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Redis;
 
 class TokenObserver{
 	public function __construct(){
-		dump("Observer construct");
+		//dump("Observer construct");
 	}
 
 /*
@@ -22,18 +22,18 @@ class TokenObserver{
 	}*/
 
 	public function saved(UserToken $session){
-		dump("saved");
-		dump($session);
+		//dump("saved");
+		//dump($session);
 		$expireTime = $session->create_time + (86400 * 90);
         $key = UserToken::TOKEN_PREFIX . $session->token;
-		dump($key);
+		//dump($key);
 
         $data = [
             'uid'       => $session->uid,
             'platform' => $session->platform,
             'create_time'   => $session->create_time
         ];
-		dump($data);
+		//dump($data);
         Redis::hmset($key, $data);
         Redis::expireAt($key, $expireTime);
 	}
