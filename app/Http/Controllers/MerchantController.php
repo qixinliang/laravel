@@ -97,6 +97,7 @@ class MerchantController extends Controller{
 			]);
 		}
 		$uid = $ret->id;
+		$userType = $ret->type;
 
 
 		//加session处理
@@ -108,6 +109,7 @@ class MerchantController extends Controller{
 
 		$data = [];
 		$data['uid'] = intval($uid);
+		$data['user_type'] = intval($userType);
 		$row = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
 		if(!isset($row) || empty($row)){
 			$token = new UserToken;
