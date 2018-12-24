@@ -105,6 +105,9 @@ class MerchantController extends Controller{
 		//写uid/token数据
 		//1.token固定一个，只更新时间,更新时间的目的，在于更新了create_time，expire_time也会被动更新.
 		//2.每次进来需要先清理redis里的数据，然后在save的时候，触发事件再设置。
+
+		$data = [];
+		$data['uid'] = intval($uid);
 		$row = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
 		if(!isset($row) || empty($row)){
 			$token = new UserToken;
@@ -114,6 +117,8 @@ class MerchantController extends Controller{
 			$token->create_time = time();
 			//dump($token);
 			$token->save();
+			
+			$data['token'] = $token->token;
 		}else{
 			//重置redis
 			$key = UserToken::TOKEN_PREFIX . $row->token;
@@ -121,12 +126,13 @@ class MerchantController extends Controller{
 
 			$row->create_time = time();
 			$row->save();
+			$data['token'] = $row->token;
 		}
 
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '登陆成功',
-			//'data' => $ret
+			'data' => $data
 		]);
 	}
 
