@@ -63,12 +63,13 @@ class MerchantController extends Controller{
 
 	public function login(Request $request){
 		$uid = $request->session()->get('uid');
+		/*
 		if(!empty($uid)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '请勿重复登陆'
 			]);
-		}
+		}*/
 
 		$params = $request->all();
 		if(empty($params)){

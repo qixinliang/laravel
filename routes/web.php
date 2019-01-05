@@ -42,3 +42,5 @@ Route::post('/sku/audit','SkuController@audit');
 
 Route::get('/merchant/lists','MerchantController@lists');
 Route::get('/sku/lists','SkuController@lists');
+
+Route::get('/qiniu/token','QiniuController@getToken');
