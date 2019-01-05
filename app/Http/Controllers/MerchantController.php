@@ -140,7 +140,6 @@ class MerchantController extends Controller{
 	}
 
 	public function logout(Request $request){
-		/*
 		$params = $request->all();
 		if(empty($params)){
 			return response()->json([
@@ -148,12 +147,30 @@ class MerchantController extends Controller{
 				'error_msg' => '请求参数为空'
 			]);
 		}
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
 
-		$uid = isset($params['uid'])? $params['uid'] : 0;
-		*/
+		$uid = $params['uid'];
 
 		//FIXME 针对uid，删除token表的数据／redis的数据?
-		$request->session()->forget('uid');
+		$platform = 0;
+		$row = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => 'token数据已经删除'
+			]);
+		}
+
+		$key = UserToken::TOKEN_PREFIX . $row->token;
+		Redis::del($key);
+		$row->delete();
+
+		//$request->session()->forget('uid');
 		//$request->session()->flush();
 		return response()->json([
 			'error_code' => 0,
@@ -222,13 +239,46 @@ class MerchantController extends Controller{
 	//对应前端修改注意：
 	//当前登陆用户为普通商户，添加按钮隐藏，不允许添加功能出现。
 	public function add(Request $request){
+		/*
 		$uid = $request->session()->get('uid');
 		if(empty($uid)){
 			return response()->json([
 				'error_code' => -1,	
 				'error_msg' => '请先登陆'
 			]);
+		}*/
+
+		$params = $request->all();
+		if(empty($params)){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
 		}
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+
 		$row = Merchant::find($uid);
 		if(empty($row)){
 			return response()->json([
@@ -313,6 +363,7 @@ class MerchantController extends Controller{
 	}
 
 	public function edit(Request $request){
+		/*
 		$loginUid = $request->session()->get('uid');
 		if(empty($loginUid)){
 			return response()->json([
@@ -320,19 +371,42 @@ class MerchantController extends Controller{
 				'error_msg' => '请先登陆'
 			]);
 		}
+		*/
+		$params = $request->all();
+		if(empty($params)){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$loginUid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $loginUid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
 		$row = Merchant::find($loginUid);
 		if(empty($row)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '数据异常，并未在用户表里找到该用户'
-			]);
-		}
-
-		$params = $request->all();
-		if(empty($params) || empty($params['data'])){
-			return response()->json([
-				'error_code' => '-1',
-				'error_msg' => '请求参数为空'
 			]);
 		}
 
