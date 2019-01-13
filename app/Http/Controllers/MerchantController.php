@@ -227,11 +227,22 @@ class MerchantController extends Controller{
 	}
 
 	public function lists(Request $request){
-		$lists = Merchant::all();
+		$params = $request->all();
+		$pagination = 0;
+		if(!empty($params['data'])){
+			$data = $params['data'];
+			$username = isset($data['username'])? $data['username'] : '';
+			$pagination = isset($data['pagination'])? $data['pagination'] : 10;
+		}
+		if(isset($username) && !empty($username)){
+			$lists = Merchant::where('username', 'like', '%'.$username.'%')->paginate($pagination); 
+		}else{
+			$lists = Merchant::paginate($pagination);
+		}
 		return response()->json([
 			'error_code' => 0,	
 			'error_msg' => '获取列表信息成功',
-			'data' => $lists
+			'data' =>$lists
 		]);
 	}
 
@@ -490,13 +501,14 @@ class MerchantController extends Controller{
 
 	public function erweima(Request $request){
 		require_once __DIR__ . '/../../../vendor/phpqrcode/phpqrcode.php';
+		/*
 		$loginUid = $request->session()->get('uid');
 		if(empty($loginUid)){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg'  => '未登陆'
 			]);
-		}
+		}*/
 
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
@@ -505,6 +517,31 @@ class MerchantController extends Controller{
 				'error_msg' => '请求参数为空'
 			]);
 		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$loginUid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $loginUid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+
 		$data = $params['data'];
 		if(empty($data['merchant_id'])){
 			return response()->json([
@@ -521,7 +558,7 @@ class MerchantController extends Controller{
 			]);
 		}
 		if($row->id != $loginUid && $row->creator_uid != $loginUid){
-			return reponse()->json([
+			return response()->json([
 				'error_code' => -1,
 				'error_msg'  => '仅允许生成自己或者自己创建的商户的二维码'
 			]);	

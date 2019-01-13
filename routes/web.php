@@ -40,7 +40,7 @@ Route::post('/sku/edit','SkuController@edit');
 Route::post('/sku/info','SkuController@info');
 Route::post('/sku/audit','SkuController@audit');
 
-Route::get('/merchant/lists','MerchantController@lists');
-Route::get('/sku/lists','SkuController@lists');
+Route::post('/merchant/lists','MerchantController@lists');
+Route::post('/sku/lists','SkuController@lists');
 
 Route::get('/qiniu/token','QiniuController@getToken');
