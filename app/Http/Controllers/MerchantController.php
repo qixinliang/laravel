@@ -350,6 +350,7 @@ class MerchantController extends Controller{
 		$merchant->password = $password;
 		$merchant->repass   = $repass;
 		$merchant->type     = $type;
+		$merchant->logo     = $logo;
 		$merchant->creator_uid = $uid;
 
 		if($type == Merchant::TYPE_NORMAL_MER || $type == Merchant::TYPE_VIP_MER){
@@ -497,7 +498,6 @@ class MerchantController extends Controller{
 			'data' => $row
 		]);
 	}
-
 
 	public function erweima(Request $request){
 		require_once __DIR__ . '/../../../vendor/phpqrcode/phpqrcode.php';
