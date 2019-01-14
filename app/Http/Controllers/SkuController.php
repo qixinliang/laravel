@@ -316,4 +316,65 @@ class SkuController extends Controller{
 			'data' => $sku
 		]);
 	}
+
+	public function del(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['sku_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品id为空'
+			]);
+		}
+		$skuId = $data['sku_id'];
+		$sku = Sku::find($skuId);
+		if(empty($sku)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '获取数据为空'
+			]);
+		}
+		if($uid != $sku->creator_uid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '非奖品发布者无权删除'	
+			]);
+		}
+		$sku->delete();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '奖品已删除',
+		]);
+	}
 }
