@@ -8,19 +8,35 @@ use Illuminate\Http\Response;
 
 class SkuController extends Controller{
 	public function add(Request $request){
-		$uid = $request->session()->get('uid');
-		if(empty($uid)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '请先登陆'
-			]);
-		}
-
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
 			]);
 		}
 
@@ -50,19 +66,35 @@ class SkuController extends Controller{
 	}
 
 	public function edit(Request $request){
-		$uid = $request->session()->get('uid');
-		if(empty($uid)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg'  => '请先登陆'
-			]);
-		}
-
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
 			]);
 		}
 
@@ -220,19 +252,35 @@ class SkuController extends Controller{
 	}
 
 	public function audit(Request $request){
-		$uid = $request->session()->get('uid');
-		if(empty($uid)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg'  => '请先登陆'
-			]);
-		}
-
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
 			]);
 		}
 

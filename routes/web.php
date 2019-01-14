@@ -32,11 +32,13 @@ Route::post('/merchant/logout','MerchantController@logout');
 Route::post('/merchant/complete','MerchantController@complete');
 Route::post('/merchant/add','MerchantController@add');
 Route::post('/merchant/edit','MerchantController@edit');
+Route::post('/merchant/del','MerchantController@del');
 Route::post('/merchant/info','MerchantController@info');
 Route::post('/merchant/erweima','MerchantController@erweima');
 
 Route::post('/sku/add','SkuController@add');
 Route::post('/sku/edit','SkuController@edit');
+Route::post('/sku/del','SkuController@del');
 Route::post('/sku/info','SkuController@info');
 Route::post('/sku/audit','SkuController@audit');
 

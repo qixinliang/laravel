@@ -474,6 +474,77 @@ class MerchantController extends Controller{
 		]);
 	}
 
+	public function del(Request $request){
+		$params = $request->all();
+		if(empty($params)){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$loginUid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $loginUid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+		$row = Merchant::find($loginUid);
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '数据异常，并未在用户表里找到该用户'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['merchant_id'])){
+			return response()->json([
+				'error_code' => -1,
+				"error_msg"  => '请提供需要修改的商户id'
+			]);
+		}
+
+		$current = Merchant::find($data['merchant_id']);
+		if(empty($current)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '数据库中并未存在此条要删除的记录'
+			]);
+		}
+
+		$uid = $current->id;
+		$creatorUid = $current->creator_uid;
+		if($loginUid != $uid && $loginUid != $creatorUid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '权限错误，仅能删除自己或者自己创建的商户数据'
+			]);
+		}
+
+		$current->delete();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '删除成功',
+		]);
+	}
+
 	public function info(Request $request){
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
