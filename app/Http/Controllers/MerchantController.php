@@ -572,29 +572,14 @@ class MerchantController extends Controller{
 
 	public function erweima(Request $request){
 		require_once __DIR__ . '/../../../vendor/phpqrcode/phpqrcode.php';
-		/*
-		$loginUid = $request->session()->get('uid');
-		if(empty($loginUid)){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg'  => '未登陆'
-			]);
-		}*/
-
 		$params = $request->all();
-		if(empty($params) || empty($params['data'])){
+		if(empty($params['uid']) || empty($params['data'])){
 			return response()->json([
 				'error_code' => '-1',
 				'error_msg' => '请求参数为空'
 			]);
 		}
 
-		if(!isset($params['uid'])){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '请求uid为空'
-			]);
-		}
 		$loginUid = $params['uid'];
 
 		$platform = 0;
@@ -638,7 +623,10 @@ class MerchantController extends Controller{
 		$value 					= "abc.com/index.php?mid = {$mid}"; //二维码内容
   		$errorCorrectionLevel 	= 'L'; //容错级别
   		$matrixPointSize 		= 5;   //生成图片大小
-  		$filename 				= __DIR__ . '/../../../public/qrcode/'.time().'.png';//生成二维码图片
+		$basepath = '/qrcode/' . $mid .'_'. time() . '.png';
+  		$filename 				= $_SERVER['DOCUMENT_ROOT'] . $basepath;//生成二维码图e
+		file_put_contents($filename,'');
+		$final = $request->server()['HTTP_HOST'] . $basepath;
 
   		\QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
   		$QR = $filename; //已经生成的原始二维码图片文件
@@ -647,11 +635,14 @@ class MerchantController extends Controller{
   		imagepng($QR, 'qrcode.png');//输出图片
   		imagedestroy($QR);
 
+		$row->erweima = $final;
+		$row->save();
+
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '生成二维码成功',
 			'data' => [
-				'erweima' => $filename,
+				'erweima' => $final,
 			]
 		]);
 	}
