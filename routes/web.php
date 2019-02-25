@@ -46,3 +46,4 @@ Route::post('/merchant/lists','MerchantController@lists');
 Route::post('/sku/lists','SkuController@lists');
 
 Route::get('/qiniu/token','QiniuController@getToken');
+Route::get('/weixin/token','WeixinController@getAccessToken');

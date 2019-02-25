@@ -39,6 +39,7 @@ class Controller extends BaseController
 		'SkuController/info' => 1,
 		'SkuController/lists' => 1,
 		'QiniuController/getToken' => 1,
+		'WeixinController/getAccessToken' => 1,
 	];
 
 	public function __construct(Request $request){
