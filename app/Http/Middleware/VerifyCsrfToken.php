@@ -30,5 +30,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'/sku/info',
 		'/sku/lists',
 		'/sku/audit',
+
+        'weixin/qr',
     ];
 }
