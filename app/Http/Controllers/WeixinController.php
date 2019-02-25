@@ -112,11 +112,9 @@ class WeixinController extends Controller{
             ]
         ];
 
-        /*
         $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$access_token}";
 
         $arr = [
-            "page" => "pages/index/index",
             "scene" => $mid,
             "width" => 430,
             "auto_color" => false,
@@ -126,7 +124,6 @@ class WeixinController extends Controller{
                 "b" => 0
             ]
         ];
-        */
 
         $data_string =  json_encode($arr);
         var_dump($data_string);
@@ -156,7 +153,7 @@ class WeixinController extends Controller{
 			'error_code' => 0,
 			'error_msg' => '生成小程序码成功',
 			'data' => [
-				'mini_pic' => $res,
+				'mini_pic' => $result,
 			]
 		]);*/
 	}
