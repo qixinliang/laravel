@@ -378,4 +378,32 @@ class SkuController extends Controller{
 			'error_msg' => '奖品已删除',
 		]);
 	}
+
+
+    //根据商户id获取它的所有优惠券
+    //支持跨域调用
+    public function getSkuByMid(Request $request){
+		$params = $request->all();
+		if(empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+        $data = $params['data'];
+        if(!isset($data['merchant_id']) || empty($data['merchant_id'])){
+            return response()->json([
+                'error_code'  => -1,
+                'error_msg' => '未传入商户id参数'
+            ]);
+        }
+
+        $mid = $data['merchant_id'];
+		$ret = Sku::where(['creator_uid' => $mid, 'is_delete' => 0])->get();
+        return response()->json([
+            'error_code' => 0,
+            'error_msg' => 'success',
+            'data' => $ret
+        ]);
+    }
 }

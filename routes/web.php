@@ -41,6 +41,7 @@ Route::post('/sku/edit','SkuController@edit');
 Route::post('/sku/del','SkuController@del');
 Route::post('/sku/info','SkuController@info');
 Route::post('/sku/audit','SkuController@audit');
+Route::post('/sku/get','SkuController@getSkuByMid');
 
 Route::post('/merchant/lists','MerchantController@lists');
 Route::post('/sku/lists','SkuController@lists');
