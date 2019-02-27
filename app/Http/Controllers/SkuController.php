@@ -406,4 +406,8 @@ class SkuController extends Controller{
             'data' => $ret
         ]);
     }
+
+    public static function generate_code($length = 4) {
+        return strval(rand(pow(10,($length-1)), pow(10,$length)-1));
+    }
 }
