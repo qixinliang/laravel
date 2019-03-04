@@ -41,6 +41,7 @@ class Controller extends BaseController
 		'QiniuController/getToken' => 1,
 		'WeixinController/getAccessToken' => 1,
 		'WeixinController/miniprogramQr' => 1,
+		'WeixinController/login' => 1,
 		'SkuController/getSkuByMid' => 1,
 	];
 

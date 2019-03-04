@@ -36,6 +36,33 @@ class WeixinController extends Controller{
 		]);
     }
 
+    public function login(Request $request){
+        $params = $request->all();
+		if(empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+        $data = $params['data'];
+        if(!isset($data['js_code']) || empty($data['js_code'])){
+            return response()->json([
+                'error_code'  => -1,
+                'error_msg' => '未传入js_code参数'
+            ]);
+        }
+
+        $code = $data['js_code'];
+        $url = "https://api.weixin.qq.com/sns/jscode2session?appid={$this->appId}&secret={$this->appSecret}&js_code={$code}&grant_type=authorization_code";
+        $res = $this->httpGet($url);
+        $res = json_decode($res,true);
+        return response()->json([
+            'error_code' => 0,
+            'error_msg' => '小程序登陆成功',
+            'data' => $res
+        ]);
+    }
+
 	public function miniprogramQr(Request $request){
 		$params = $request->all();
 		if(empty($params['uid']) || empty($params['data'])){

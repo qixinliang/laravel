@@ -33,5 +33,6 @@ class VerifyCsrfToken extends BaseVerifier
         '/sku/get',
 
         'weixin/qr',
+        'weixin/login',
     ];
 }

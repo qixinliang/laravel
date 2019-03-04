@@ -50,3 +50,4 @@ Route::get('/qiniu/token','QiniuController@getToken');
 Route::get('/weixin/token','WeixinController@getAccessToken');
 
 Route::post('/weixin/qr','WeixinController@miniprogramQr');
+Route::post('/weixin/login','WeixinController@login');
