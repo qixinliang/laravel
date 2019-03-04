@@ -45,6 +45,7 @@ class Controller extends BaseController
 		'SkuController/getSkuByMid' => 1,
 
 		'CouponController/setCoupon' => 1,
+		'CouponController/getCoupon' => 1,
 	];
 
 	public function __construct(Request $request){

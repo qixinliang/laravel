@@ -53,3 +53,4 @@ Route::post('/weixin/qr','WeixinController@miniprogramQr');
 Route::post('/weixin/login','WeixinController@login');
 
 Route::post('/coupon/set','CouponController@setCoupon');
+Route::post('/coupon/get','CouponController@getCoupon');
