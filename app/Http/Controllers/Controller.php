@@ -43,6 +43,8 @@ class Controller extends BaseController
 		'WeixinController/miniprogramQr' => 1,
 		'WeixinController/login' => 1,
 		'SkuController/getSkuByMid' => 1,
+
+		'CouponController/setCoupon' => 1,
 	];
 
 	public function __construct(Request $request){
