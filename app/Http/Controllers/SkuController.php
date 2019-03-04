@@ -58,6 +58,7 @@ class SkuController extends Controller{
 		$sku->add_time 		= time();
 		$sku->creator_uid   = $uid;
 		$sku->is_delete		= 0;
+        $sku->sku_no = static::generateCode(16);
 		$sku->save();
 		return response()->json([
 			'error_code' => 0,
@@ -407,7 +408,7 @@ class SkuController extends Controller{
         ]);
     }
 
-    public static function generate_code($length = 4) {
+    public static function generateCode($length = 4) {
         return strval(rand(pow(10,($length-1)), pow(10,$length)-1));
     }
 }
