@@ -153,7 +153,6 @@ class WeixinController extends Controller{
         ];
 
         $data_string =  json_encode($arr);
-        var_dump($data_string);
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
