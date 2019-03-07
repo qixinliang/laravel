@@ -187,6 +187,41 @@ class SkuController extends Controller{
 		]);
 	}
 
+	public function lists1(Request $request){
+		$params = $request->all();
+		$pagination = 0;
+		if(!empty($params['data'])){
+			$data = $params['data'];
+			$skuName = isset($data['sku_name'])? $data['sku_name'] : '';
+			$pagination = isset($data['pagination'])? $data['pagination'] : 10;
+		}
+		if(isset($skuName) && !empty($skuName)){
+			$lists = DB::table('sku')
+				->join('merchant','sku.creator_uid','=','merchant.id')
+				->select('sku.*','merchant.username')
+				->where('sku.sku_name','like','%'.$skuName.'%')
+				->paginate($pagination)
+				->get();
+		}else{
+			$lists = DB::table('sku')
+				->join('merchant','sku.creator_uid','=','merchant.id')
+				->select('sku.*','merchant.username')
+				->paginate($pagination)
+				->get();
+		}
+		/*
+		if(isset($skuName) && !empty($skuName)){
+			$lists = Sku::where('sku_name', 'like', '%'.$skuName.'%')->paginate($pagination);
+		}else{
+			$lists = Sku::paginate($pagination);
+		}*/
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '获取列表信息成功',
+			'data' => $lists
+		]);
+	}
+
 	public function auditReject(Request $request){
 		$params = $request->all();
 		if(empty($params) || empty($params['data'])){
