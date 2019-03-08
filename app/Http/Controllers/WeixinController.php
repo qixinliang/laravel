@@ -174,6 +174,10 @@ class WeixinController extends Controller{
         $result=$this->data_uri($res,'image/png');
         //return '<image src='.$result.'></image>';
 
+        //保存商户小程序码字段
+        $row->mini_program_ma = $result;
+        $row->save();
+
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '生成小程序码成功',
