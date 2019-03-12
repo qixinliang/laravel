@@ -6,6 +6,7 @@ use App\Model\UserToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use DB;
 
 class SkuController extends Controller{
 	public function add(Request $request){

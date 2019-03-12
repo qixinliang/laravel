@@ -174,17 +174,40 @@ class WeixinController extends Controller{
         $result=$this->data_uri($res,'image/png');
         //return '<image src='.$result.'></image>';
 
-        //保存商户小程序码字段
-        $row->mini_program_ma = $result;
-        $row->save();
 
+	if (preg_match('/^(data:\s*image\/(\w+);base64,)/',$result,$res)) {
+		$type = $res[2];
+
+            //图片保存路径
+            $new_file = "static/images/".date('Ymd',time()).'/';
+            if (!file_exists($new_file)) {
+		var_dump($new_file);
+                mkdir($new_file,0755,true);
+            }
+	//图片名字
+            $new_file = $new_file.time().'.'.$type;
+            if (file_put_contents($new_file,base64_decode(str_replace($res[1],'', $result)))) {
+		$final = $request->server()['HTTP_HOST'];
+		//var_dump($final);
+		//var_dump($_SERVER['DOCUMENT_ROOT']);
+		$new_file = "https://zhiyouwenhua.com/".$new_file;
+        //保存商户小程序码字段
+        $row->mini_program_ma = $new_file;
+        $row->save();
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '生成小程序码成功',
 			'data' => [
-				'qr' => $result,
+				'qr' => $new_file,
 			]
 		]);
+            } else {
+		return response()->json([
+			'error_code' => -1,
+			'error_msg' => '生成小程序码失败',
+		]);
+            }
+	    }
 	}
 
     private function httpGet($url)
