@@ -112,6 +112,8 @@ class WeixinController extends Controller{
 			]);	
 		}
 
+        $mName = $row->username;
+
         //post提交
 
         $access_token = Redis::get($this->access_token_cache_key);
@@ -142,7 +144,8 @@ class WeixinController extends Controller{
         $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$access_token}";
 
         $arr = [
-            "scene" => $mid,
+            "scene" => [$mid,$mName],
+            //"scene" => $mid,
             "width" => 430,
             "auto_color" => false,
             "line_color" => [
