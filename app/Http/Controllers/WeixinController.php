@@ -144,7 +144,7 @@ class WeixinController extends Controller{
         $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={$access_token}";
 
         $arr = [
-            "scene" => [$mid,$mName],
+            "scene" => $mid. "-" .$mName,
             //"scene" => $mid,
             "width" => 430,
             "auto_color" => false,
