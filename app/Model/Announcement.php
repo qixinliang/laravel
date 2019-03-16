@@ -2,7 +2,7 @@
 namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 
-class Coupon extends Model{
-    protected $table = 'coupon';
+class Announcement extends Model{
+    protected $table = 'announcement';
     public $timestamps = false;
 }

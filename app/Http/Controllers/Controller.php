@@ -46,6 +46,9 @@ class Controller extends BaseController
 
 		'CouponController/setCoupon' => 1,
 		'CouponController/getCoupon' => 1,
+
+		'AnnouncementController/lists' => 1,
+		'AnnouncementController/info' => 1,
 	];
 
 	public function __construct(Request $request){

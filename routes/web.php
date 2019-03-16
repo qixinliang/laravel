@@ -54,3 +54,9 @@ Route::post('/weixin/login','WeixinController@login');
 
 Route::post('/coupon/set','CouponController@setCoupon');
 Route::post('/coupon/get','CouponController@getCoupon');
+
+Route::post('/ann/create','AnnouncementController@create');
+Route::post('/ann/edit','AnnouncementController@edit');
+Route::post('/ann/lists','AnnouncementController@lists');
+Route::post('/ann/info','AnnouncementController@info');
+Route::post('/ann/del','AnnouncementController@del');

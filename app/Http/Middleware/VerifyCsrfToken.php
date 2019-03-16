@@ -37,5 +37,11 @@ class VerifyCsrfToken extends BaseVerifier
 
         'coupon/set',
         'coupon/get',
+
+        'ann/create',
+        'ann/edit',
+        'ann/lists',
+        'ann/info',
+        'ann/del',
     ];
 }
