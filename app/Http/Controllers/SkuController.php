@@ -231,10 +231,10 @@ class SkuController extends Controller{
                 $lists = DB::table('sku') 
                ->join('merchant','sku.creator_uid','=', 'merchant.id')
                ->select('sku.*','merchant.username')
-               ->WhereIn('sku.creater_uid',function($query) use($loginUid)){
+               ->WhereIn('sku.creater_uid',function($query) use($loginUid){
                     $query->select('id')
                         ->from('merchant')
-                        ->where('creator_uid','=',$loginUid)
+                        ->where('creator_uid','=',$loginUid);
                })
                ->orWhere('sku.creator_uid', '=', $loginUid)
 			   ->where('sku.sku_name','like','%'.$skuName.'%')
