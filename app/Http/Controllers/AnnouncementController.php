@@ -134,7 +134,7 @@ class AnnouncementController extends Controller{
 		$data = $params['data'];
 
         if($row->type != Merchant::TYPE_ADMIN){
-            return response->json([
+            return response()->json([
                 'error_code' => -1, 
                 'error_msg' => '非管理员无权修改公告'
             ]);
@@ -283,9 +283,9 @@ class AnnouncementController extends Controller{
 		$data = $params['data'];
 
         if($row->type != Merchant::TYPE_ADMIN){
-            return response->json([
+            return response()->json([
                 'error_code' => -1, 
-                'error_msg' => '非管理员无权修改公告'
+                'error_msg' => '非管理员无权删除公告'
             ]);
         }
         if(empty($data['ann_id'])){
