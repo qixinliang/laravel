@@ -257,13 +257,13 @@ class MerchantController extends Controller{
         //普通商户
         if($row->type == Merchant::TYPE_NORMAL_MER){
             $rows = DB::table('merchant')
-                ->select(DB::raw('id, username,add_time,type'))
+                ->select(DB::raw('id, username,add_time,type,logo'))
                 ->where('id', $id)
 				->orderBy('add_time','desc')
                 ->paginate($pagination);
             if(!empty($username)){
                 $rows = DB::table('merchant')
-                    ->select(DB::raw('id, username,add_time,type'))
+                    ->select(DB::raw('id, username,add_time,type,logo'))
                     ->where('id', $id)
                     ->Where('username', 'like', '%'.$username.'%')
 					->orderBy('add_time','desc')
@@ -274,7 +274,7 @@ class MerchantController extends Controller{
         //代理商
         elseif($row->type == Merchant::TYPE_VIP_MER){
             $rows = DB::table('merchant')
-                ->select(DB::raw('id, username,add_time,type'))
+                ->select(DB::raw('id, username,add_time,type,logo'))
                 ->where('id', $id)
                 ->orWhere('creator_uid',$id)
 				->orderBy('add_time','desc')
@@ -282,7 +282,7 @@ class MerchantController extends Controller{
                 //->get();
             if(!empty($username)){
                 $rows = DB::table('merchant')
-                    ->select(DB::raw('id, username,add_time,type'))
+                    ->select(DB::raw('id, username,add_time,type,logo'))
                     ->Where('username', 'like', '%'.$username.'%')
                     ->Where(function ($query) use ($id){
                         $query->where('id', '=', $id)
@@ -296,12 +296,12 @@ class MerchantController extends Controller{
         //管理员
         else if($row->type == Merchant::TYPE_ADMIN){
             $rows = DB::table('merchant')
-                ->select(DB::raw('id, username,add_time,type'))
+                ->select(DB::raw('id, username,add_time,type,logo'))
 				->orderBy('add_time','desc')
                 ->paginate($pagination);
             if(!empty($username)){
                 $rows = DB::table('merchant')
-                    ->select(DB::raw('id, username,add_time,type'))
+                    ->select(DB::raw('id, username,add_time,type,logo'))
                     ->Where('username', 'like', '%'.$username.'%')
 					->orderBy('add_time','desc')
                     ->paginate($pagination);
