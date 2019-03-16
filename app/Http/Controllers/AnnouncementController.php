@@ -155,10 +155,9 @@ class AnnouncementController extends Controller{
             ]); 
         }
 
-		/*
         if(isset($data['title'])){
             $ann->title = $data['title'];
-        }*/
+        }
 
         if(isset($data['content'])){
             $ann->content = $data['content'];

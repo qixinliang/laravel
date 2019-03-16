@@ -259,12 +259,14 @@ class MerchantController extends Controller{
             $rows = DB::table('merchant')
                 ->select(DB::raw('id, username,add_time,type'))
                 ->where('id', $id)
+				->orderBy('add_time','desc')
                 ->paginate($pagination);
             if(!empty($username)){
                 $rows = DB::table('merchant')
                     ->select(DB::raw('id, username,add_time,type'))
                     ->where('id', $id)
                     ->Where('username', 'like', '%'.$username.'%')
+					->orderBy('add_time','desc')
                     ->paginate($pagination);
             }
         }
@@ -275,6 +277,7 @@ class MerchantController extends Controller{
                 ->select(DB::raw('id, username,add_time,type'))
                 ->where('id', $id)
                 ->orWhere('creator_uid',$id)
+				->orderBy('add_time','desc')
                 ->paginate($pagination);
                 //->get();
             if(!empty($username)){
@@ -285,6 +288,7 @@ class MerchantController extends Controller{
                         $query->where('id', '=', $id)
                             ->orWhere('creator_uid', '=', $id);
                     })
+					->orderBy('add_time','desc')
                     ->paginate($pagination);
             }
         }
@@ -293,11 +297,13 @@ class MerchantController extends Controller{
         else if($row->type == Merchant::TYPE_ADMIN){
             $rows = DB::table('merchant')
                 ->select(DB::raw('id, username,add_time,type'))
+				->orderBy('add_time','desc')
                 ->paginate($pagination);
             if(!empty($username)){
                 $rows = DB::table('merchant')
                     ->select(DB::raw('id, username,add_time,type'))
                     ->Where('username', 'like', '%'.$username.'%')
+					->orderBy('add_time','desc')
                     ->paginate($pagination);
             }
         }

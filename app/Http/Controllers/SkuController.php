@@ -204,6 +204,7 @@ class SkuController extends Controller{
 				->join('merchant','sku.creator_uid','=','merchant.id')
 				->select('sku.*','merchant.username')
                 ->where('sku.creator_uid', '=', $loginUid)
+				->orderBy('sku.add_time','desc')
 				->paginate($pagination);
             if(!empty($skuName)){
 			    $lists = DB::table('sku')
@@ -211,6 +212,7 @@ class SkuController extends Controller{
 				    ->select('sku.*','merchant.username')
                     ->where('sku.creator_uid', '=', $loginUid)
 				    ->where('sku.sku_name','like','%'.$skuName.'%')
+					->orderBy('sku.add_time','desc')
 				    ->paginate($pagination);
             }
         }
@@ -225,6 +227,7 @@ class SkuController extends Controller{
                     ->where('creator_uid','=',$loginUid);
            })
            ->orWhere('sku.creator_uid', '=', $loginUid)
+		   ->orderBy('sku.add_time','desc')
            ->paginate($pagination);
            
            if(!empty($skuName)){
@@ -238,6 +241,7 @@ class SkuController extends Controller{
                         ->where('creator_uid','=',$loginUid);
                })
                ->orWhere('sku.creator_uid', '=', $loginUid)
+			   ->orderBy('sku.add_time','desc')
                ->paginate($pagination);
            }
         //管理员看到所有
@@ -245,12 +249,14 @@ class SkuController extends Controller{
 			$lists = DB::table('sku')
 				->join('merchant','sku.creator_uid','=','merchant.id')
 				->select('sku.*','merchant.username')
+			    ->orderBy('sku.add_time','desc')
 				->paginate($pagination);
             if(!empty($skuName)){
 			    $lists = DB::table('sku')
 				    ->join('merchant','sku.creator_uid','=','merchant.id')
                     ->select('sku.*','merchant.username')
                     ->where('sku.sku_name','like','%'.$skuName.'%')
+					->orderBy('sku.add_time','desc')
                     ->paginate($pagination);
             }
         }
