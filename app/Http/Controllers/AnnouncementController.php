@@ -196,12 +196,14 @@ class AnnouncementController extends Controller{
 
         $lists = DB::table('announcement')
             ->select(DB::raw('id, title,content,create_time,update_time'))
+			->orderby('create_time','desc')
             ->paginate($pagination);
-        if(!empty($title)){
+        if(!empty($keyword)){
             $lists = DB::table('announcement')
                 ->select(DB::raw('id, title,content,create_time,update_time'))
                 ->where('title', 'like', '%'.$keyword.'%')
                 ->orWhere('content', 'like', '%'.$keyword.'%')
+				->orderby('create_time','desc')
                 ->paginate($pagination);
         }
 
