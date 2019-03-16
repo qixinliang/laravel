@@ -155,15 +155,10 @@ class AnnouncementController extends Controller{
             ]); 
         }
 
+		/*
         if(isset($data['title'])){
-            if($data['title'] == $ann->title){
-                return response()->json([
-                    'error_code' => -1, 
-                    'error_msg' => '公告标题不可以重复'
-                ]);
-            } 
             $ann->title = $data['title'];
-        }
+        }*/
 
         if(isset($data['content'])){
             $ann->content = $data['content'];
