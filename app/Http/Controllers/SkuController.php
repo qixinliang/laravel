@@ -222,7 +222,7 @@ class SkuController extends Controller{
            ->WhereIn('sku.creater_uid',function($query) use($loginUid){
                 $query->select('id')
                     ->from('merchant')
-                    ->where('creator_uid','=',$loginUid)
+                    ->where('creator_uid','=',$loginUid);
            })
            ->orWhere('sku.creator_uid', '=', $loginUid)
            ->paginate($pagination);
