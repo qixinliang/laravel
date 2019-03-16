@@ -246,6 +246,12 @@ class MerchantController extends Controller{
 		$pagination = isset($data['pagination'])? $data['pagination'] : 10;
 
 		$row = Merchant::where('id',$id)->first();
+        if(empty($row)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '未获取到当前登陆商户信息'
+            ]);
+        }
         $rows = NULL;
 
         //普通商户

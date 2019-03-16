@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Sku;
+use App\Merchant;
 use App\Model\UserToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -170,26 +171,90 @@ class SkuController extends Controller{
 
 	public function lists(Request $request){
 		$params = $request->all();
-		$pagination = 0;
-		if(!empty($params['data'])){
-			$data = $params['data'];
-			$skuName = isset($data['sku_name'])? $data['sku_name'] : '';
-			$pagination = isset($data['pagination'])? $data['pagination'] : 10;
-		}
-		if(isset($skuName) && !empty($skuName)){
+        if(empty($params['data'])){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '请求参数有误'
+            ]);
+        }
+		$data = $params['data'];
+		$skuName = isset($data['sku_name'])? $data['sku_name'] : '';
+		$pagination = isset($data['pagination'])? $data['pagination'] : 10;
+        if(!isset($data['login_uid']) || empty($data['login_uid'])){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '未传入当前登陆商户id参数'
+            ]);
+        }
+        $loginUid = $data['login_uid'];
+        //当前登陆用户为普通用户
+
+        $row = Merchant::where('id',$loginUid)->first();
+        if(empty($row)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '未获取到当前登陆商户信息'
+            ]);
+        }
+
+        //普通商户
+        $lists = NULL;
+        if($row->type == Merchant::TYPE_NORMAL_MER){
 			$lists = DB::table('sku')
 				->join('merchant','sku.creator_uid','=','merchant.id')
 				->select('sku.*','merchant.username')
-				->where('sku.sku_name','like','%'.$skuName.'%')
+                ->where('sku.creator_uid', '=', $loginUid)
 				->paginate($pagination);
-				//->get();
-		}else{
+            if(!empty($skuName)){
+			    $lists = DB::table('sku')
+				    ->join('merchant','sku.creator_uid','=','merchant.id')
+				    ->select('sku.*','merchant.username')
+                    ->where('sku.creator_uid', '=', $loginUid)
+				    ->where('sku.sku_name','like','%'.$skuName.'%')
+				    ->paginate($pagination);
+            }
+        }
+        //代理商
+        elseif($row->type == Merchant::TYPE_VIP_MER){
+           $lists = DB::table('sku') 
+           ->join('merchant','sku.creator_uid','=', 'merchant.id')
+           ->select('sku.*','merchant.username')
+           ->WhereIn('sku.creater_uid',function($query) use($loginUid)){
+                $query->select('id')
+                    ->from('merchant')
+                    ->where('creator_uid','=',$loginUid)
+           })
+           ->orWhere('sku.creator_uid', '=', $loginUid)
+           ->paginate($pagination);
+           
+           if(!empty($skuName)){
+                $lists = DB::table('sku') 
+               ->join('merchant','sku.creator_uid','=', 'merchant.id')
+               ->select('sku.*','merchant.username')
+               ->WhereIn('sku.creater_uid',function($query) use($loginUid)){
+                    $query->select('id')
+                        ->from('merchant')
+                        ->where('creator_uid','=',$loginUid)
+               })
+               ->orWhere('sku.creator_uid', '=', $loginUid)
+			   ->where('sku.sku_name','like','%'.$skuName.'%')
+               ->paginate($pagination);
+           }
+        //管理员看到所有
+        }else{
 			$lists = DB::table('sku')
 				->join('merchant','sku.creator_uid','=','merchant.id')
 				->select('sku.*','merchant.username')
 				->paginate($pagination);
-				//->get();
-		}
+            if(!empty($skuName)){
+			    $lists = DB::table('sku')
+				    ->join('merchant','sku.creator_uid','=','merchant.id')
+                    ->select('sku.*','merchant.username')
+                    ->where('sku.sku_name','like','%'.$skuName.'%')
+                    ->paginate($pagination);
+            }
+        }
+
 		return response()->json([
 			'error_code' => 0,
 			'error_msg' => '获取列表信息成功',
