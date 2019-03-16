@@ -54,7 +54,7 @@ class AnnouncementController extends Controller{
 		$data = $params['data'];
 
         if($row->type != Merchant::TYPE_ADMIN){
-            return response->json([
+            return response()->json([
                 'error_code' => -1, 
                 'error_msg' => '非管理员无权发布公告'
             ]);
