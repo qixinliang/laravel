@@ -298,7 +298,7 @@ class AnnouncementController extends Controller{
         $id = $data['ann_id'];
         $ann = Announcement::where('id',$id)->first();
         if(empty($ann)){
-            return reponse()->json([
+            return response()->json([
                 'error_code' => -1, 
                 'error_msg'  => '此公告不存在，无法删除'
             ]);
