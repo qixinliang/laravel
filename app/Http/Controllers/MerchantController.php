@@ -527,12 +527,14 @@ class MerchantController extends Controller{
 
 		$uid = $current->id;
 		$creatorUid = $current->creator_uid;
-		if($loginUid != $uid && $loginUid != $creatorUid){
-			return response()->json([
-				'error_code' => -1,
-				'error_msg' => '权限错误，仅能修改自己或者自己创建的商户数据'
-			]);
-		}
+        if($row->type != Merchant::TYPE_ADMIN){
+		    if($loginUid != $uid && $loginUid != $creatorUid){
+			    return response()->json([
+				    'error_code' => -1,
+				    'error_msg' => '权限错误，普通用户或者代理商仅能修改自己或者自己创建的商户数据'
+			    ]);
+		    }
+        }
 
 		if(!empty($password) && !empty($repass)){
 			$current->password = $password;
@@ -606,12 +608,27 @@ class MerchantController extends Controller{
 
 		$uid = $current->id;
 		$creatorUid = $current->creator_uid;
+        if($loginUid == $uid){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg'  => '权限错误，不能删除自己'
+            ]);
+        }
+        if($row->type != Merchant::TYPE_ADMIN){
+            if($loginUid != $uid && $loginUid != $creatorUid){
+			    return response()->json([
+				    'error_code' => -1,
+				    'error_msg' => '不是该商户／或其创建者，无权删除商户数据'
+			    ]);
+            }
+        }
+        /*
 		if($loginUid != $uid && $loginUid != $creatorUid){
 			return response()->json([
 				'error_code' => -1,
 				'error_msg' => '权限错误，仅能删除自己或者自己创建的商户数据'
 			]);
-		}
+		}*/
 
 		$current->delete();
 		return response()->json([
