@@ -156,12 +156,6 @@ class AnnouncementController extends Controller{
         }
 
         if(isset($data['title'])){
-            if($data['title'] == $ann->title){
-                return response()->json([
-                    'error_code' => -1, 
-                    'error_msg' => '公告标题不可以重复'
-                ]);
-            } 
             $ann->title = $data['title'];
         }
 
@@ -196,12 +190,14 @@ class AnnouncementController extends Controller{
 
         $lists = DB::table('announcement')
             ->select(DB::raw('id, title,content,create_time,update_time'))
+			->orderby('create_time','desc')
             ->paginate($pagination);
-        if(!empty($title)){
+        if(!empty($keyword)){
             $lists = DB::table('announcement')
                 ->select(DB::raw('id, title,content,create_time,update_time'))
                 ->where('title', 'like', '%'.$keyword.'%')
                 ->orWhere('content', 'like', '%'.$keyword.'%')
+				->orderby('create_time','desc')
                 ->paginate($pagination);
         }
 
