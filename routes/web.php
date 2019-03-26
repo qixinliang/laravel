@@ -60,3 +60,5 @@ Route::post('/ann/edit','AnnouncementController@edit');
 Route::post('/ann/lists','AnnouncementController@lists');
 Route::post('/ann/info','AnnouncementController@info');
 Route::post('/ann/del','AnnouncementController@del');
+
+Route::post('/promo/acquire','PromoController@acquire');

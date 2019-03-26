@@ -43,5 +43,7 @@ class VerifyCsrfToken extends BaseVerifier
         'ann/lists',
         'ann/info',
         'ann/del',
+
+        'promo/acquire',
     ];
 }

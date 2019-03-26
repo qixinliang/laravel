@@ -43,7 +43,7 @@ class PromoController extends Controller{
                 }
             }
          */
-        if(empty($data['openid']))){
+        if(empty($data['openid'])){
             return response()->json([
                 'error_code' => -1, 
                 'error_msg'  => '未传入openid参数'
@@ -66,5 +66,9 @@ class PromoController extends Controller{
                 $number = $v['number'];
             }
         }
+        return response()->json([
+            'error_code' => 0, 
+            'error_msg'  => '获得优惠券成功'
+        ]);
     }
 }

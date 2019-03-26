@@ -49,6 +49,8 @@ class Controller extends BaseController
 
 		'AnnouncementController/lists' => 1,
 		'AnnouncementController/info' => 1,
+
+        'PromoController/acquire' => 1,
 	];
 
 	public function __construct(Request $request){
