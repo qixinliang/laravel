@@ -109,12 +109,47 @@ class PromoController extends Controller{
         ]);
     }
 
-    public function getByOpenid(Request $request){
+
+    //需加分页
+    public function getPromoByopenid(Request $request){
         $params = $request->all();
-        if(empty($param['data']['openid'])){
+        if(empty($params['data']['openid'])){
             return response()->json([
                 'error_code' => -1,
                 'error_msg' => 'openid参数有误'
+            ]);
+        }
+        $openid = $params['data']['openid'];
+        $promos = Promo::where(['openid'=>$openid,'promo_status' => Promo::STATUS_NORMAL])->get();
+
+        return response()->json([
+            'error_code' => 0, 
+            'error_msg'  => 'success',
+            'data' => $promos
+        ]);
+    }
+
+    public function consume(Request $request){
+        $params = $request->all();
+        if(empty($params['data'])){
+            return response()->json([
+                'error_code' => -1,    
+                'error_msg' => '请求参数有误'
+            ]); 
+        }
+        $data = $params['data'];
+        if(empty($data['promo_display_code'])){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg' => '未传入核销券号'
+            ]); 
+        }
+        $code = $data['promo_display_code'];
+        $promo = Promo::where(['promo_display_code' => $code,'promo_status' => Promo::STATUS_NORMAL])->first();
+        if(empty($promo)){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg'  = '不存在的券'
             ]);
         }
     }

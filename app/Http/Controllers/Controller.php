@@ -51,6 +51,7 @@ class Controller extends BaseController
 		'AnnouncementController/info' => 1,
 
         'PromoController/acquire' => 1,
+        'PromoController/getPromoByopenid' => 1,
 	];
 
 	public function __construct(Request $request){
