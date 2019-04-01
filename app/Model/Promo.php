@@ -7,10 +7,9 @@ class  Promo extends Model{
     public $timestamps = false;
 
     const STATUS_NORMAL     = 1; //正常
-    const STATUS_LOCKED     = 2; //锁定
-    const STATUS_USED       = 3; //已使用
-    const STATUS_INVALID    = 4; //作废
-    const STATUS_DONATED    = 5; //已转赠
+    const STATUS_USED       = 2; //已使用
+    const STATUS_INVALID    = 3; //作废
+    const STATUS_DONATED    = 4; //已转赠
 
     const BY_OFFICAL_GAME   = 1; //小游戏获得
     const BY_OTHER_FRIEND   = 2; //朋友赠送

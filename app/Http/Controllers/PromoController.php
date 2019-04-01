@@ -59,11 +59,15 @@ class PromoController extends Controller{
 
         $openid = $data['openid'];
         $skuInfo = $data['sku_info'];
-        var_dump($skuInfo);
 
         foreach($skuInfo as $v){
             $skuId  = $v['sku_id'];
             $number = $v['number'];
+            
+            $skuObj = Sku::find($skuId);
+            if(empty($skuObj)) continue;
+            if($skuObj->is_delete == 1) continue;
+
             for($i = 0; $i < $number; $i++){
                 $promo  = new Promo();
                 $code   = Promo::createNo();
@@ -72,7 +76,7 @@ class PromoController extends Controller{
                 $promo->promo_code          = $code;
                 $promo->promo_display_code  = md5($code.'_'.$openid);
                 $promo->period_start        = $time;
-                $promo->period_end          = "2029-01-01 01:00:00";
+                $promo->period_end          = date("Y-m-d H:i:s",strtotime($time)+$skuObj->valid_time * 24 *3600);
                 $promo->openid              = $openid;
                 $promo->pre_openid          = 0;
                 $promo->add_time            = $time;
@@ -149,7 +153,31 @@ class PromoController extends Controller{
         if(empty($promo)){
             return response()->json([
                 'error_code' => -1,
-                'error_msg'  = '不存在的券'
+                'error_msg'  => '券不存在或已消费'
+            ]);
+        }
+        if(time() > strtotime($promo->period_end)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '优惠券已过期，无法使用'
+            ]);
+        }
+        $promo->promo_status = Promo::STATUS_USED;
+        $promo->save();
+        return response()->json([
+            'error_code' => 0, 
+            'error_msg'  => '消费成功'
+        ]);
+    }
+
+
+    //在系统里弄一个表openid nickname uid的用户表
+    public function donate(Request $request){
+        $params = $request->all();
+        if(empty($params['data'])){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg'  => '参数错误'
             ]);
         }
     }
