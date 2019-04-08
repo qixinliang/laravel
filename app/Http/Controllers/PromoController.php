@@ -125,6 +125,13 @@ class PromoController extends Controller{
         }
         $openid = $params['data']['openid'];
         $promos = Promo::where(['openid'=>$openid,'promo_status' => Promo::STATUS_NORMAL])->get();
+		$promos = DB::table('promo')
+				    ->join('sku','sku.id','=','promo.sku_id')
+				    ->select('promo.*','sku.sku_name')
+                    ->where('promo.openid', '=', $openid)
+				    ->where('promo.promo_status','=',Promo::STATUS_NORMAL)
+					->orderBy('promo.id','desc')
+				    ->get();
 
         return response()->json([
             'error_code' => 0, 
