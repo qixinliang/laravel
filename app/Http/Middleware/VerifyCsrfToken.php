@@ -47,5 +47,7 @@ class VerifyCsrfToken extends BaseVerifier
         'promo/acquire',
         'promo/my',
         'promo/consume',
+        'promo/alls',
+        'promo/used',
     ];
 }

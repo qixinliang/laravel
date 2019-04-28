@@ -64,3 +64,5 @@ Route::post('/ann/del','AnnouncementController@del');
 Route::post('/promo/acquire','PromoController@acquire');
 Route::post('/promo/my','PromoController@getPromoByopenid');
 Route::post('/promo/consume','PromoController@consume');
+Route::post('/promo/alls','PromoController@allPromosByMid');
+Route::post('/promo/used','PromoController@allUsedpromosByMid');

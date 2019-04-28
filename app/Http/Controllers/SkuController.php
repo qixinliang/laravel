@@ -43,6 +43,16 @@ class SkuController extends Controller{
 			]);
 		}
 
+        $merchant = Merchant::where('id',$uid)->first();
+        if(empty($merchant)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '此商户数据不存在'
+            ]); 
+        }
+
+        $merName = $merchant->merchant_name;
+
 		$data = $params['data'];
 		if(empty($data['sku_name'])){
 			return response()->json([
@@ -59,6 +69,7 @@ class SkuController extends Controller{
 		$sku->status 		= Sku::STATUS_NOT_AUDIT;
 		$sku->add_time 		= time();
 		$sku->creator_uid   = $uid;
+        $sku->creator_name  = $merName;
 		$sku->is_delete		= 0;
         $sku->sku_no = static::generateCode(16);
 		$sku->save();

@@ -68,11 +68,14 @@ class PromoController extends Controller{
             if(empty($skuObj)) continue;
             if($skuObj->is_delete == 1) continue;
 
+            $merchantId = $skuObj->creator_uid;
+
             for($i = 0; $i < $number; $i++){
                 $promo  = new Promo();
                 $code   = Promo::createNo();
                 $time   = date("Y-m-d H:i:s");
                 $promo->sku_id              = $skuId;
+                $promo->merchant_id         = $merchantId;
                 $promo->promo_code          = $code;
                 $promo->promo_display_code  = md5($code.'_'.$openid);
                 $promo->period_start        = $time;
@@ -187,5 +190,55 @@ class PromoController extends Controller{
                 'error_msg'  => '参数错误'
             ]);
         }
+    }
+
+    public function allPromosByMid(Request $request){
+        $params = $request->all();
+        if(empty($params['data']['merchant_id'])){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg' => '参数错误'
+            ]);
+        }
+        
+        $mid = $params['data']['merchant_id'];
+
+        $res = DB::table('promo')
+               ->join('sku','sku.id','=','promo.sku_id')
+               ->select(DB::raw('promo.sku_id, count(*) as number,sku.sku_name,sku.creator_name'))
+               ->where('promo.merchant_id', '=',$mid)
+               ->where('promo.promo_status','=',Promo::STATUS_NORMAL)
+               ->groupBy('promo.sku_id')
+               ->get();
+        return response()->json([
+            'error_code' => 0, 
+            'error_msg' => '获取统计结果成功',
+            'data' => $res
+        ]);
+    }
+
+    public function allUsedpromosByMid(Request $request){
+        $params = $request->all();
+        if(empty($params['data']['merchant_id'])){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg' => '参数错误'
+            ]);
+        }
+        
+        $mid = $params['data']['merchant_id'];
+
+        $res = DB::table('promo')
+               ->join('sku','sku.id','=','promo.sku_id')
+               ->select(DB::raw('promo.sku_id, count(*) as number,sku.sku_name,sku.creator_name'))
+               ->where('promo.merchant_id', '=',$mid)
+               ->where('promo.promo_status','=',Promo::STATUS_USED)
+               ->groupBy('promo.sku_id')
+               ->get();
+        return response()->json([
+            'error_code' => 0, 
+            'error_msg' => '获取统计结果成功',
+            'data' => $res
+        ]);
     }
 }
