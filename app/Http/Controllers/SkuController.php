@@ -291,14 +291,14 @@ class SkuController extends Controller{
         if($row->type == Merchant::TYPE_NORMAL_MER){
 			$lists = DB::table('sku')
 				->join('merchant','sku.creator_uid','=','merchant.id')
-				->select('sku.*','merchant.username')
+				->select('sku.*','merchant.merchant_name')
                 ->where('sku.creator_uid', '=', $loginUid)
 				->orderBy('sku.add_time','desc')
 				->paginate($pagination);
             if(!empty($skuName)){
 			    $lists = DB::table('sku')
 				    ->join('merchant','sku.creator_uid','=','merchant.id')
-				    ->select('sku.*','merchant.username')
+				    ->select('sku.*','merchant.merchant_name')
                     ->where('sku.creator_uid', '=', $loginUid)
 				    ->where('sku.sku_name','like','%'.$skuName.'%')
 					->orderBy('sku.add_time','desc')
@@ -309,7 +309,7 @@ class SkuController extends Controller{
         elseif($row->type == Merchant::TYPE_VIP_MER){
            $lists = DB::table('sku') 
            ->join('merchant','sku.creator_uid','=', 'merchant.id')
-           ->select('sku.*','merchant.username')
+           ->select('sku.*','merchant.merchant_name')
            ->WhereIn('sku.creator_uid',function($query) use($loginUid){
                 $query->select('id')
                     ->from('merchant')
@@ -322,7 +322,7 @@ class SkuController extends Controller{
            if(!empty($skuName)){
                 $lists = DB::table('sku') 
                ->join('merchant','sku.creator_uid','=', 'merchant.id')
-               ->select('sku.*','merchant.username')
+               ->select('sku.*','merchant.merchant_name')
 			   ->where('sku.sku_name','like','%'.$skuName.'%')
                ->WhereIn('sku.creator_uid',function($query) use($loginUid){
                     $query->select('id')
@@ -337,13 +337,13 @@ class SkuController extends Controller{
         }else{
 			$lists = DB::table('sku')
 				->join('merchant','sku.creator_uid','=','merchant.id')
-				->select('sku.*','merchant.username')
+				->select('sku.*','merchant.merchant_name')
 			    ->orderBy('sku.add_time','desc')
 				->paginate($pagination);
             if(!empty($skuName)){
 			    $lists = DB::table('sku')
 				    ->join('merchant','sku.creator_uid','=','merchant.id')
-                    ->select('sku.*','merchant.username')
+                    ->select('sku.*','merchant.merchant_name')
                     ->where('sku.sku_name','like','%'.$skuName.'%')
 					->orderBy('sku.add_time','desc')
                     ->paginate($pagination);

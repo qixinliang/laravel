@@ -25,6 +25,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'/merchant/erweima',
 	
 		'/sku/add',
+		'/sku/addex',
 		'/sku/edit',
 		'/sku/del',
 		'/sku/info',
