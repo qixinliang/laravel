@@ -21,7 +21,7 @@ class  Promo extends Model{
     public static function createNo()
     {
     	$count = Promo::count() + 1;
-    	var_dump($count);
+    	//var_dump($count);
         $timeArray = explode("-", date("Y-m-d-H-i-s", time()));
         return substr($timeArray[0], -2).$timeArray[1].$timeArray[2].$timeArray[3].
         $timeArray[4].$timeArray[5].$count;

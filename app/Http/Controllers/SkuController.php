@@ -63,6 +63,7 @@ class SkuController extends Controller{
 
 		$sku = new Sku();
 		$sku->sku_name 		= $data['sku_name'];
+        $sku->cnt           = !empty($data['cnt'])? $data['cnt'] : 0;
 		$sku->valid_time 	= !empty($data['valid_time'])? $data['valid_time'] : 0;
 		$sku->logo 			= !empty($data['logo'])? $data['logo'] : '';
 		$sku->redirect_url 	= !empty($data['redirect_url'])? $data['redirect_url'] : '';
@@ -72,6 +73,79 @@ class SkuController extends Controller{
         $sku->creator_name  = $merName;
 		$sku->is_delete		= 0;
         $sku->sku_no = static::generateCode(16);
+        $sku->sku_type = Sku::SKU_TYPE_NORMAL;
+		$sku->save();
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '奖品添加成功',
+			'data' => $sku
+		]);
+	}
+
+	public function addex(Request $request){
+		$params = $request->all();
+		if(empty($params) || empty($params['data'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		if(!isset($params['uid'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请求uid为空'
+			]);
+		}
+		$uid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $uid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+
+        $merchant = Merchant::where('id',$uid)->first();
+        if(empty($merchant)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '此商户数据不存在'
+            ]); 
+        }
+
+        $merName = $merchant->merchant_name;
+
+		$data = $params['data'];
+		if(empty($data['sku_name'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '奖品名称为空'
+			]);
+		}
+
+		$sku = new Sku();
+		$sku->sku_name 		= $data['sku_name'];
+        $sku->cnt           = !empty($data['cnt'])? $data['cnt'] : 0;
+		$sku->valid_time 	= !empty($data['valid_time'])? $data['valid_time'] : 0;
+		$sku->logo 			= !empty($data['logo'])? $data['logo'] : '';
+		$sku->redirect_url 	= !empty($data['redirect_url'])? $data['redirect_url'] : '';
+		$sku->status 		= Sku::STATUS_NOT_AUDIT;
+		$sku->add_time 		= time();
+		$sku->creator_uid   = $uid;
+        $sku->creator_name  = $merName;
+		$sku->is_delete		= 0;
+        $sku->sku_no = static::generateCode(16);
+        $sku->sku_type = Sku::SKU_TYPE_VIP;
 		$sku->save();
 		return response()->json([
 			'error_code' => 0,
@@ -136,6 +210,10 @@ class SkuController extends Controller{
 		}
 		if(isset($data['sku_name'])){
 			$sku->sku_name = $data['sku_name'];
+		}
+
+		if(isset($data['cnt'])){
+			$sku->cnt = $data['cnt'];
 		}
 		if(isset($data['valid_time'])){
 			$sku->valid_time = $data['valid_time'];

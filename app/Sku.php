@@ -12,4 +12,7 @@ class Sku extends Model
 	const STATUS_NOT_AUDIT = 0;
 	const STATUS_AUDIT_SUCCESS = 1;
 	const STATUS_AUDIT_FAIL = -1;
+
+    const SKU_TYPE_NORMAL = 0;
+    const SKU_TYPE_VIP    = 1;
 }

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redis;
 
 use DB;
 
+use App\Library\RedLock\RedLock;
+
 class PromoController extends Controller{
     
     public function acquire(Request $request){
@@ -56,64 +58,103 @@ class PromoController extends Controller{
                 'error_msg'  => '并未获得优惠券，再接再厉'
             ]);
         }
-
         $openid = $data['openid'];
         $skuInfo = $data['sku_info'];
 
-        foreach($skuInfo as $v){
-            $skuId  = $v['sku_id'];
-            $number = $v['number'];
-            
-            $skuObj = Sku::find($skuId);
-            if(empty($skuObj)) continue;
-            if($skuObj->is_delete == 1) continue;
+        $redisConfig = config('cache.stores.redis');
+        if(empty($redisConfig)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => '未配置redis缓存'
+            ]); 
+        }
 
-            $merchantId = $skuObj->creator_uid;
+        $servers = [
+			[$redisConfig['host'], $redisConfig['port'], 0.01]
+		];
 
-            for($i = 0; $i < $number; $i++){
-                $promo  = new Promo();
-                $code   = Promo::createNo();
-                $time   = date("Y-m-d H:i:s");
-                $promo->sku_id              = $skuId;
-                $promo->merchant_id         = $merchantId;
-                $promo->promo_code          = $code;
-                $promo->promo_display_code  = md5($code.'_'.$openid);
-                $promo->period_start        = $time;
-                $promo->period_end          = date("Y-m-d H:i:s",strtotime($time)+$skuObj->valid_time * 24 *3600);
-                $promo->openid              = $openid;
-                $promo->pre_openid          = 0;
-                $promo->add_time            = $time;
-                $promo->promo_status        = Promo::STATUS_NORMAL;
-                $promo->promo_type          = 1; //暂定1
-                $promo->obj_src             = Promo::BY_OFFICAL_GAME;
+        $redLock = new RedLock($servers);
+        $lock = false;
+        while(!$lock){
+            $lock = $redLock->lock("openid_{$openid}",1000);
+        }
 
+        try{
+            DB::beginTransaction();
+            foreach($skuInfo as $v){
+                $skuId  = $v['sku_id'];
+                $number = $v['number'];
+                
+                $skuObj = Sku::find($skuId);
+                if(empty($skuObj)) continue;
+                if($skuObj->is_delete == 1) continue;
 
-                $value = $promo->promo_display_code; //二维码内容
-                $errorCorrectionLevel   = 'L'; //容错级别
-                $matrixPointSize        = 5;   //生成图片大小
-                $basepath = '/qrcode/'.$value.'.png';
-                $filename = $_SERVER['DOCUMENT_ROOT'] . $basepath;//生成二维码图
-                file_put_contents($filename,'');
-                $final = $request->server()['HTTP_HOST'] . $basepath;
-
-                \QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
-                $QR = $filename; //已经生成的原始二维码图片文件
-                $QR = imagecreatefromstring(file_get_contents($QR));
-
-                imagepng($QR, 'qrcode.png');//输出图片
-                imagedestroy($QR);
-
-                $promo->erweima = $final;
-
-                if(!$promo->save()){
+                if($skuObj->cnt != 0 && $number > $skuObj->cnt){
                     continue;
                 }
+
+                $merchantId = $skuObj->creator_uid;
+                $existedPromos = Promo::where(['sku_id' => $skuId,'merchant_id' => $merchantId, 'promo_status' => Promo::STATUS_NORMAL])->count();
+
+                if($skuObj->cnt != 0 && $existedPromos == $skuObj->cnt){
+                    throw new \Exception("该优惠券已发放完，不能再领取");
+                }
+
+                for($i = 0; $i < $number; $i++){
+                    $promo  = new Promo();
+                    $code   = Promo::createNo();
+                    $time   = date("Y-m-d H:i:s");
+                    $promo->sku_id              = $skuId;
+                    $promo->merchant_id         = $merchantId;
+                    $promo->promo_code          = $code;
+                    $promo->promo_display_code  = md5($code.'_'.$openid);
+                    $promo->period_start        = $time;
+                    $promo->period_end          = date("Y-m-d H:i:s",strtotime($time)+$skuObj->valid_time * 24 *3600);
+                    $promo->openid              = $openid;
+                    $promo->pre_openid          = 0;
+                    $promo->add_time            = $time;
+                    $promo->promo_status        = Promo::STATUS_NORMAL;
+                    $promo->promo_type          = 1; //暂定1
+                    $promo->obj_src             = Promo::BY_OFFICAL_GAME;
+
+
+                    $value = $promo->promo_display_code; //二维码内容
+                    $errorCorrectionLevel   = 'L'; //容错级别
+                    $matrixPointSize        = 5;   //生成图片大小
+                    $basepath = '/qrcode/'.$value.'.png';
+                    $filename = $_SERVER['DOCUMENT_ROOT'] . $basepath;//生成二维码图
+                    file_put_contents($filename,'');
+                    $final = $request->server()['HTTP_HOST'] . $basepath;
+
+                    \QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
+                    $QR = $filename; //已经生成的原始二维码图片文件
+                    $QR = imagecreatefromstring(file_get_contents($QR));
+
+                    imagepng($QR, 'qrcode.png');//输出图片
+                    imagedestroy($QR);
+
+                    $promo->erweima = $final;
+
+                    if(!$promo->save()){
+                        continue;
+                    }
+                }
             }
+            DB::commit();
+            return response()->json([
+                'error_code' => 0, 
+                'error_msg'  => '获得优惠券成功'
+            ]);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return $this->response()->json([
+                'error_code' => -1,
+                'error_msg' => '错误，出现异常'
+            ]);
         }
-        return response()->json([
-            'error_code' => 0, 
-            'error_msg'  => '获得优惠券成功'
-        ]);
+        finally{
+            $redLock->unlock($lock);
+        }
     }
 
 
