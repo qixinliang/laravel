@@ -30,6 +30,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'/sku/del',
 		'/sku/info',
 		'/sku/lists',
+		'/sku/listsex',
 		'/sku/audit',
         '/sku/get',
 

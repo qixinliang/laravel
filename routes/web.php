@@ -46,6 +46,7 @@ Route::post('/sku/get','SkuController@getSkuByMid');
 
 Route::post('/merchant/lists','MerchantController@lists');
 Route::post('/sku/lists','SkuController@lists');
+Route::post('/sku/listsex','SkuController@listsex');
 
 Route::get('/qiniu/token','QiniuController@getToken');
 Route::get('/weixin/token','WeixinController@getAccessToken');
