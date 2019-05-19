@@ -51,5 +51,6 @@ class VerifyCsrfToken extends BaseVerifier
         'promo/consume',
         'promo/alls',
         'promo/used',
+        'promo/test',
     ];
 }

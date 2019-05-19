@@ -282,4 +282,14 @@ class PromoController extends Controller{
             'data' => $res
         ]);
     }
+
+    public function test(Request $request){
+        $params = $request->all();
+        var_dump($params);
+        return response()->json([
+            'error_code' => 0,
+            'error_msg' => '优惠券核销扫码测试',
+            'data' => ''
+        ]);
+    }
 }
