@@ -309,7 +309,6 @@ public function test(Request $request){
         $access_token = $json_obj['access_token'];
         $openid = $json_obj['openid'];
 
-        var_dump($access_token);
         var_dump($openid);
         $get_user_info_url = 'https://api.weixin.qq.com/sns/userinfo?access_token='.$access_token.'&openid='.$openid.'&lang=zh_CN';
 
@@ -327,7 +326,13 @@ public function test(Request $request){
 
         $_SESSION['user'] = $user_obj;
 
-        print_r($user_obj);
+        $tmp_array = ['oi4J51AmO7GWRffewlvnBNpegHeQ','oi4J51LfHAafx4IoXiZznH22QsEQ'];
+        if(!in_array($openid,$tmp_array)){
+            return response()->json([
+                'error_code' => -1, 
+                'error_msg' => 'not hexiaoyuan, bu neng he xiao '
+            ]); 
+        }
                return response()->json([
             'error_code' => 0,
             'error_msg' => 'consume test',
