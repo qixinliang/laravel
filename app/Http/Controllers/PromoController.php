@@ -328,7 +328,7 @@ class PromoController extends Controller{
             return response()->json([
                 'error_code' => -1,
                 'error_msg'  => '微信code参数传递有误'
-            ]);
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
         $code   = $params['code'];
@@ -339,12 +339,12 @@ class PromoController extends Controller{
             return response()->json([
                 'error_code' => -1, 
                 'error_msg' => '非核销员，无权核销'
-            ]); 
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
         return response()->json([
             'error_code' => 0,
             'error_msg' => '核销成功',
-        ]);
+        ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }
