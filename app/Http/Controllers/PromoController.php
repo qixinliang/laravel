@@ -295,7 +295,7 @@ class PromoController extends Controller{
         }
 
         $code = $params['code'];
-        $appid = 'wx0ae56cd6f90bc2d7';
+        $appid = 'wx0ae56cd6f90bc2d7';
         $secret = '4f49025ea331023bf4f6d3ad9fec67a1';
         $get_token_url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$appid.'&secret='.$secret.'&code='.$code.'&grant_type=authorization_code';
         $ch = curl_init();
