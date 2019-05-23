@@ -118,7 +118,8 @@ class PromoController extends Controller{
                     $promo->obj_src             = Promo::BY_OFFICAL_GAME;
 
 
-                    $value = $promo->promo_display_code; //二维码内容
+                    $tmpCode = $promo->promo_display_code; //二维码内容
+                    $value = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0ae56cd6f90bc2d7&redirect_uri=https%3A%2F%2Fzhiyouwenhua.com%2Fpromo%2Ftest%3Fpromo_display_code%3D".$tmpCode."&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
                     $errorCorrectionLevel   = 'L'; //容错级别
                     $matrixPointSize        = 5;   //生成图片大小
                     $basepath = '/qrcode/'.$value.'.png';
