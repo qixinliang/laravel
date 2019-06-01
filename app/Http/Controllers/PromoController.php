@@ -73,11 +73,12 @@ class PromoController extends Controller{
 			[$redisConfig['host'], $redisConfig['port'], 0.01]
 		];
 
+        /*
         $redLock = new RedLock($servers);
         $lock = false;
         while(!$lock){
             $lock = $redLock->lock("openid_{$openid}",1000);
-        }
+        }*/
 
         try{
             DB::beginTransaction();
@@ -122,7 +123,7 @@ class PromoController extends Controller{
                     $value = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0ae56cd6f90bc2d7&redirect_uri=https%3A%2F%2Fzhiyouwenhua.com%2Fpromo%2Ftest%3Fpromo_display_code%3D".$tmpCode."&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
                     $errorCorrectionLevel   = 'L'; //容错级别
                     $matrixPointSize        = 5;   //生成图片大小
-                    $basepath = '/qrcode/'.$value.'.png';
+                    $basepath = '/qrcode/'.$tmpCode.'.png';
                     $filename = $_SERVER['DOCUMENT_ROOT'] . $basepath;//生成二维码图
                     file_put_contents($filename,'');
                     $final = $request->server()['HTTP_HOST'] . $basepath;
@@ -148,13 +149,13 @@ class PromoController extends Controller{
             ]);
         }catch(\Exception $e){
             DB::rollBack();
-            return $this->response()->json([
+            return response()->json([
                 'error_code' => -1,
                 'error_msg' => '错误，出现异常'
             ]);
         }
         finally{
-            $redLock->unlock($lock);
+            //$redLock->unlock($lock);
         }
     }
 
