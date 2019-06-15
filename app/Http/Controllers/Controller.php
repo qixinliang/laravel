@@ -57,6 +57,8 @@ class Controller extends BaseController
         'PromoController/allPromosByMid' => 1,
         'PromoController/allUsedpromosByMid' => 1,
         'PromoController/test' => 1,
+
+        'WaiterController/bind' => 1,
 	];
 
 	public function __construct(Request $request){
