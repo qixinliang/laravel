@@ -35,7 +35,7 @@ Route::post('/merchant/edit','MerchantController@edit');
 Route::post('/merchant/del','MerchantController@del');
 Route::post('/merchant/info','MerchantController@info');
 Route::post('/merchant/erweima','MerchantController@erweima');
-Route::post('/merchant/consqr','MerchantController@consumerQr');
+Route::post('/merchant/consqr','MerchantController@consumerQrcode');
 
 Route::post('/sku/add','SkuController@add');
 Route::post('/sku/addex','SkuController@addex');
