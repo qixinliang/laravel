@@ -347,7 +347,7 @@ class PromoController extends Controller{
             return response()->json([
                 'error_code' => -1,
                 'error_msg'  => '微信code参数传递有误'
-            ])->setencodingoptions(json_unescaped_unicode);
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
         $code   = $params['code'];
@@ -358,7 +358,7 @@ class PromoController extends Controller{
             return response()->json([
                 'error_code' => -1,
                 'error_msg'  => '非该商家核销员，无权核销'
-            ])->setencodingoptions(json_unescaped_unicode);
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
         
         $row = Promo::where([
@@ -374,7 +374,7 @@ class PromoController extends Controller{
             return response()->json([
                 'error_code' => -1,
                 'error_msg'  => '在此商户中，并未查找到该优惠券,或已经使用过,或不在使用日期内'
-            ])->setencodingoptions(json_unescaped_unicode);
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
         $row->promo_status = Promo::STATUS_USED;
