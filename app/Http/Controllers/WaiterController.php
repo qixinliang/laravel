@@ -73,6 +73,7 @@ class WaiterController extends Controller{
             ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
+        $openid = $userinfo['openid'];
         $existed = Waiter::where(['merchant_id' => $mid, 'openid' => $openid])->first();
         if(!empty($existed)){
             return response()->json([
@@ -84,7 +85,7 @@ class WaiterController extends Controller{
         $waiter->merchant_id = $mid;
         $waiter->nickname = $userinfo['nickname'];
         $waiter->avatar   = $userinfo['headimgurl'];
-        $waiter->openid = $userinfo['openid'];
+        $waiter->openid = $openid;
         $waiter->save();
 
         return response()->json([
