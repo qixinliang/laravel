@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Merchant;
 use App\Sku;
+use App\Model\Waiter;
 use App\Model\UserToken;
 use App\Model\Promo;
 use App\Http\Controllers\Controller;
@@ -120,7 +121,7 @@ class PromoController extends Controller{
 
 
                     $tmpCode = $promo->promo_display_code; //二维码内容
-                    $value = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0ae56cd6f90bc2d7&redirect_uri=https%3A%2F%2Fzhiyouwenhua.com%2Fpromo%2Ftest%3Fpromo_display_code%3D".$tmpCode."&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
+                    $value = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0ae56cd6f90bc2d7&redirect_uri=https%3A%2F%2Fzhiyouwenhua.com%2Fpromo%2Ftest%3Fpromo_display_code%3D".$tmpCode. "%26merchant_id%3D". $merchantId ."&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
                     $errorCorrectionLevel   = 'L'; //容错级别
                     $matrixPointSize        = 5;   //生成图片大小
                     $basepath = '/qrcode/'.$tmpCode.'.png';
@@ -324,24 +325,52 @@ class PromoController extends Controller{
         header('content-type:application/json;charset=utf8');
         $params = $request->all();
         var_dump($params);
+        
+        if(empty($params['promo_display_code'])){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg'  => '优惠券显示卡号有误'
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+
+        if(empty($params['merchant_id'])){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg'  => '商户id参数错误'
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+
+        $promoDisCode = $params['promo_display_code'];
+        $mid = $params['merchant_id'];
 
         if(empty($params['code'])){
             return response()->json([
                 'error_code' => -1,
                 'error_msg'  => '微信code参数传递有误'
-            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+            ])->setencodingoptions(json_unescaped_unicode);
         }
 
         $code   = $params['code'];
-
         $openid = $this->getOpenid($code);
-        $tmp_array = ['oi4J51AmO7GWRffewlvnBNpegHeQ','oi4J51LfHAafx4IoXiZznH22QsEQ'];
-        if(!in_array($openid,$tmp_array)){
+
+        $row = Waiter::where(['merchant_id' => $mid, 'openid' => $openid])->first();       
+        if(empty($row)){
             return response()->json([
-                'error_code' => -1, 
-                'error_msg' => '非核销员，无权核销'
-            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+                'error_code' => -1,
+                'error_msg'  => '非该商家核销员，无权核销'
+            ])->setencodingoptions(json_unescaped_unicode);
         }
+        
+        $row = Promo::where(['merchant_id' => $mid, 'promo_display_code' => $promoDisCode])->first();
+        if(empty($row)){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg'  => '在此商户中，并未查找到该优惠券'
+            ])->setencodingoptions(json_unescaped_unicode);
+        }
+
+        $row->promo_status = Promo::STATUS_USED;
+        $row->save();
 
         return response()->json([
             'error_code' => 0,
