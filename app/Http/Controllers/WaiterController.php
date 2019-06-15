@@ -28,7 +28,6 @@ class WaiterController extends Controller{
         $json_obj = json_decode($res,true);
         $access_token = $json_obj['access_token'];
         $openid = $json_obj['openid'];
-        var_dump($openid);
 
         $get_user_info_url = 'https://api.weixin.qq.com/sns/userinfo?access_token='.$access_token.'&openid='.$openid.'&lang=zh_CN';
         $ch = curl_init();
@@ -39,7 +38,6 @@ class WaiterController extends Controller{
         $res = curl_exec($ch);
         curl_close($ch);
         $user_obj = json_decode($res,true);
-        var_dump($user_obj);
 
         return $user_obj;
     }
