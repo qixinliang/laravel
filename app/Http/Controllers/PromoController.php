@@ -361,11 +361,19 @@ class PromoController extends Controller{
             ])->setencodingoptions(json_unescaped_unicode);
         }
         
-        $row = Promo::where(['merchant_id' => $mid, 'promo_display_code' => $promoDisCode])->first();
+        $row = Promo::where([
+            'merchant_id' => $mid,
+            'promo_display_code' => $promoDisCode,
+            'promo_status' => Promo::STATUS_NORMAL])
+            ->where('period_start', '<', date("Y-m-d H:i:s"))
+            ->where('period_end', '>', date("Y-m-d H:i:s"))
+            ->first();
+        //todo Carbon
+        //where('xxx_time', '<', Carbon::now()->format('Y-m-d H:i:s'))
         if(empty($row)){
             return response()->json([
                 'error_code' => -1,
-                'error_msg'  => '在此商户中，并未查找到该优惠券'
+                'error_msg'  => '在此商户中，并未查找到该优惠券,或已经使用过,或不在使用日期内'
             ])->setencodingoptions(json_unescaped_unicode);
         }
 
