@@ -152,7 +152,7 @@ class PromoController extends Controller{
             DB::rollBack();
             return response()->json([
                 'error_code' => -1,
-                'error_msg' => '错误，出现异常'
+                'error_msg' => $e->getMessage()
             ]);
         }
         finally{
