@@ -744,4 +744,83 @@ class MerchantController extends Controller{
 			]
 		]);
 	}
+
+    //为每个商家生成绑定核销员的二维码
+	public function consumerQrcode(Request $request){
+		require_once __DIR__ . '/../../../vendor/phpqrcode/phpqrcode.php';
+		$params = $request->all();
+		if(empty($params['uid']) || empty($params['data'])){
+			return response()->json([
+				'error_code' => '-1',
+				'error_msg' => '请求参数为空'
+			]);
+		}
+
+		$loginUid = $params['uid'];
+
+		$platform = 0;
+		$tokenData = UserToken::where(['uid' => $loginUid, 'platform' => $platform])->first();
+		if(empty($tokenData)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '请先登陆'
+			]);
+		}
+		$accessToken = isset($params['access_token'])? $params['access_token'] : 0;
+		if($tokenData->token != $accessToken){
+			return resonse()->json([
+				'error_code' => -1,
+				'error_msg'  => '数据异常，token不一致'
+			]);
+		}
+
+		$data = $params['data'];
+		if(empty($data['merchant_id'])){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg' => '商户id为空'
+			]);
+		}
+		$mid = $data['merchant_id'];
+		$row = Merchant::find($mid);
+		if(empty($row)){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '商户数据为空'
+			]);
+		}
+		if($row->id != $loginUid ){
+		//if($row->id != $loginUid && $row->creator_uid != $loginUid){
+			return response()->json([
+				'error_code' => -1,
+				'error_msg'  => '登陆商户有误'
+			]);	
+		}
+
+        $value = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0ae56cd6f90bc2d7&redirect_uri=https%3A%2F%2Fzhiyouwenhua.com%2Fwaiter%2Fbind%3Fmerchant_id%3D".$mid."&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
+  		$errorCorrectionLevel 	= 'L'; //容错级别
+  		$matrixPointSize 		= 5;   //生成图片大小
+		$basepath = '/qrcode/' . $mid .'_'. time() . '.png';
+  		$filename 				= $_SERVER['DOCUMENT_ROOT'] . $basepath;//生成二维码图e
+		file_put_contents($filename,'');
+		$final = $request->server()['HTTP_HOST'] . $basepath;
+
+  		\QRcode::png($value,$filename , $errorCorrectionLevel, $matrixPointSize, 2);
+  		$QR = $filename; //已经生成的原始二维码图片文件
+  		$QR = imagecreatefromstring(file_get_contents($QR));
+
+  		imagepng($QR, 'qrcode.png');//输出图片
+  		imagedestroy($QR);
+
+		$row->erweima = $final;
+		$row->save();
+
+		return response()->json([
+			'error_code' => 0,
+			'error_msg' => '生成核销二维码成功',
+			'data' => [
+				'erweima' => $final,
+			]
+		]);
+	}
 }

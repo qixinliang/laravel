@@ -23,6 +23,7 @@ class VerifyCsrfToken extends BaseVerifier
 		'/merchant/del',
 		'/merchant/info',
 		'/merchant/erweima',
+		'/merchant/consqr',
 	
 		'/sku/add',
 		'/sku/addex',
