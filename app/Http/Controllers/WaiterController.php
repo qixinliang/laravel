@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Merchant;
 use App\Model\UserToken;
+use App\Model\Waiter;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -65,10 +66,31 @@ class WaiterController extends Controller{
         $mid    = $params['merchant_id'];
 
         $userinfo = $this->getUserinfo($code);
-        exit;
+        if(empty($userinfo)){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg' => '获取用户信息失败',
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+
+        $existed = Waiter::where(['merchant_id' => $mid, 'openid' => $openid])->first();
+        if(!empty($existed)){
+            return response()->json([
+                'error_code' => -1,
+                'error_msg' => '已绑定过核销员，请勿重复绑定',
+            ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+        $waiter = new Waiter();
+        $waiter->merchant_id = $mid;
+        $waiter->nickname = $userinfo['nickname'];
+        $waiter->avatar   = $userinfo['headimgurl'];
+        $waiter->openid = $userinfo['openid'];
+        $waiter->save();
+
         return response()->json([
             'error_code' => 0,
-            'error_msg' => '核销成功',
+            'error_msg' => '绑定核销员成功',
+            'data' => $waiter
         ])->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }
